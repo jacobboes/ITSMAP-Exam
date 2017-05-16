@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1074784703887",
+    "firebase_url": "https://smap-bdeb2.firebaseio.com",
+    "project_id": "smap-bdeb2",
+    "storage_bucket": "smap-bdeb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074784703887:android:0485ceeb3f5fc00d",
+        "android_client_info": {
+          "package_name": "com.grp16.itsmap.smapexam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074784703887-md6qjbq7vdefn6hhhjnfeabcl59gi300.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx9DZJEN6T9Fwb6MKr1BeQIZKXdkkYVvM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
