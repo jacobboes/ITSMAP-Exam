@@ -46,7 +46,7 @@ public class Database {
     }
 
     public List<POI> getPOI(double lat, double lon, double radius, List<String> type){
-        
+     return null;
     }
 
     private void listener(){
