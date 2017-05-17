@@ -34,12 +34,12 @@
         <service
             android:name=".service.NotificationServiceOld"
             android:enabled="true"
-            android:exported="true"></service>
-        <activity android:name=".app.CameraActivity" />
+            android:exported="true" />
+
         <activity
             android:name=".app.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
