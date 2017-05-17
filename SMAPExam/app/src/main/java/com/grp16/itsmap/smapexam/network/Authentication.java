@@ -30,10 +30,10 @@ public class Authentication{
             .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        callBack.callBack(auth.getCurrentUser());
+                    if (task.isSuccessful() && auth.getCurrentUser() != null) {
+                        callBack.onSuccess();
                     } else {
-                        callBack.callBack(null);
+                        callBack.onFailed();
                     }
                 }
             });
@@ -48,11 +48,11 @@ public class Authentication{
                 .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            callBack.callBack(auth.getCurrentUser());
+                        if (task.isSuccessful() && auth.getCurrentUser() != null) {
+                            callBack.onSuccess();
 
                         } else {
-                            callBack.callBack(null);
+                            callBack.onFailed();
                         }
                     }
                 });
