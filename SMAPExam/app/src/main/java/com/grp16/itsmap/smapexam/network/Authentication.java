@@ -1,49 +1,55 @@
 package com.grp16.itsmap.smapexam.network;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import java.util.concurrent.Executor;
 
 //https://firebase.google.com/docs/auth/android/start/
-public class Authentication{
+public class Authentication {
 
     private FirebaseAuth auth;
+    private Activity activity;
 
-    Authentication(){
+    public Authentication(Activity activity) {
+        this.activity = activity;
+
         auth = FirebaseAuth.getInstance();
     }
 
-    public FirebaseUser getCurrentUser(){
+    public FirebaseUser getCurrentUser() {
         return auth.getCurrentUser();
     }
 
-    public boolean isLogedIn(){
+    public boolean isLogedIn() {
         return auth.getCurrentUser() != null;
     }
 
-    public void logIn(String username, String password, final AuthenticationCallBack callBack){
+    public void logIn(String username, String password, final AuthenticationCallBack callBack) {
         auth.signInWithEmailAndPassword(username, password)
-            .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful() && auth.getCurrentUser() != null) {
-                        callBack.onSuccess();
-                    } else {
-                        callBack.onFailed();
+                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful() && auth.getCurrentUser() != null) {
+                            callBack.onSuccess();
+                        } else {
+                            callBack.onFailed();
+                        }
                     }
-                }
-            });
+                });
     }
 
-    public void logOut(){
+    public void logOut() {
         auth.signOut();
     }
 
-    public void createAccount(String username, String password, final AuthenticationCallBack callBack){
+    public void createAccount(String username, String password, final AuthenticationCallBack callBack) {
         auth.createUserWithEmailAndPassword(username, password)
                 .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
                     @Override
