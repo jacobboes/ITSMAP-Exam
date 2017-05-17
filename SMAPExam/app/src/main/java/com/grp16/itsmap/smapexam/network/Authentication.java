@@ -9,8 +9,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.concurrent.Executor;
-
 //https://firebase.google.com/docs/auth/android/start/
 public class Authentication {
 
@@ -33,13 +31,13 @@ public class Authentication {
 
     public void logIn(String username, String password, final AuthenticationCallBack callBack) {
         auth.signInWithEmailAndPassword(username, password)
-                .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful() && auth.getCurrentUser() != null) {
                             callBack.onSuccess();
                         } else {
-                            callBack.onFailed();
+                            callBack.onFailed(task.getException().getMessage().toString());
                         }
                     }
                 });
@@ -51,14 +49,14 @@ public class Authentication {
 
     public void createAccount(String username, String password, final AuthenticationCallBack callBack) {
         auth.createUserWithEmailAndPassword(username, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful() && auth.getCurrentUser() != null) {
                             callBack.onSuccess();
 
                         } else {
-                            callBack.onFailed();
+                            callBack.onFailed(task.getException().getMessage().toString());
                         }
                     }
                 });

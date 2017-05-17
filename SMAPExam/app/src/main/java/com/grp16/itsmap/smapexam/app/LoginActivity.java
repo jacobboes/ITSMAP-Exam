@@ -92,8 +92,8 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailed() {
-                Toast.makeText(LoginActivity.this, "Failed log in.", Toast.LENGTH_SHORT).show();
+            public void onFailed(String error) {
+                Toast.makeText(LoginActivity.this, "Failed log in. " + error, Toast.LENGTH_LONG).show();
             }
         });
     }
