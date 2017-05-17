@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
         initializeViews();
 //        readSavedInstanceState(savedInstanceState);
-        authentication = new Authentication(this);
+        authentication = new Authentication();
     }
 
     private void initializeViews() {

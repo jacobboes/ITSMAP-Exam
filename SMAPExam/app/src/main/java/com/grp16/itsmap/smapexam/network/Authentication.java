@@ -1,6 +1,5 @@
 package com.grp16.itsmap.smapexam.network;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -13,11 +12,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class Authentication {
 
     private FirebaseAuth auth;
-    private Activity activity;
 
-    public Authentication(Activity activity) {
-        this.activity = activity;
-
+    public Authentication() {
         auth = FirebaseAuth.getInstance();
     }
 
