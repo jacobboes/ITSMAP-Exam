@@ -69,11 +69,11 @@ public class Database {
         return returnVal;
     }
 
-    public List<POI> getPOI(double lat, double lng, int radius, List<String> type) {
+    public List<POI> getPOI(double lat, double lng, int radius, String type) {
         List<POI> returnVal = new ArrayList();
         for (DataSnapshot singleSnapshot : POI.getChildren()) {
             POI tmp = singleSnapshot.getValue(POI.class);
-            if (type.contains(tmp.type) && withinRadius(lat, lng, radius, tmp)){
+            if (tmp.type.contains(type) && withinRadius(lat, lng, radius, tmp)){
                 returnVal.add(tmp);
             }
         }
