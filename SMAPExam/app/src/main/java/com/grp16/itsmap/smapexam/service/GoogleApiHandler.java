@@ -38,7 +38,9 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
+            urlConnection.addRequestProperty();
             urlConnection.connect();
+
 
             // Read input into a String
             InputStream inputStream = urlConnection.getInputStream();

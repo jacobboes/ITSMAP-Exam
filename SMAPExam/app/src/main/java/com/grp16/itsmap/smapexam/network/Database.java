@@ -34,9 +34,9 @@ public class Database {
 
     public void insertUpdate(POI data) {
         if (data.uid == null)
-            poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
+            poiDatabase.child(POI_COLLECTION_NAME).child(UUID.randomUUID().toString()).setValue(data);
         else
-            poiDatabase.child(data.uid).setValue(data);
+            poiDatabase.child(POI_COLLECTION_NAME).child(data.uid).setValue(data);
     }
 
     public void insertUpdate(UserCustomInfo data){
