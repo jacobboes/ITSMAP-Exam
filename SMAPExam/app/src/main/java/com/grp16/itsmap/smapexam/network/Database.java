@@ -10,6 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.model.UserCustomInfo;
+import com.grp16.itsmap.smapexam.service.LocationParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +26,21 @@ public class Database {
     private DataSnapshot POI;
     private DataSnapshot User;
 
-    Database() {
-        poiDatabase = FirebaseDatabase.getInstance().getReference(POI_COLLECTION_NAME);
+    public Database() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        poiDatabase = database.getReference(POI_COLLECTION_NAME);
         auth = FirebaseAuth.getInstance();
-        userDatabase = FirebaseDatabase.getInstance().getReference(USER_COLLECTION_NAME);
+        userDatabase = database.getReference(USER_COLLECTION_NAME);
         listener();
     }
 
     public void insertUpdate(POI data) {
         if (data.uid == null)
-            poiDatabase.child(POI_COLLECTION_NAME).child(UUID.randomUUID().toString()).setValue(data);
-        else
-            poiDatabase.child(POI_COLLECTION_NAME).child(data.uid).setValue(data);
+            data.uid = UUID.randomUUID().toString();
+            poiDatabase.setValue(data);
+        else {
+            poiDatabase.setValue(data);
+        }
     }
 
     public void insertUpdate(UserCustomInfo data){
@@ -69,11 +73,11 @@ public class Database {
         return returnVal;
     }
 
-    public List<POI> getPOI(double lat, double lng, int radius, String type) {
+    public List<POI> getPOI(LocationParam data) {
         List<POI> returnVal = new ArrayList();
         for (DataSnapshot singleSnapshot : POI.getChildren()) {
             POI tmp = singleSnapshot.getValue(POI.class);
-            if (tmp.type.contains(type) && withinRadius(lat, lng, radius, tmp)){
+            if (tmp.type.contains(data.) && withinRadius(lat, lng, radius, tmp)){
                 returnVal.add(tmp);
             }
         }
