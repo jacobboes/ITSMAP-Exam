@@ -15,6 +15,7 @@ import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Database;
 import com.grp16.itsmap.smapexam.util.appUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -62,6 +63,7 @@ public class NotificationServiceOld extends Service {
         } catch (Exception e) {
             // Handle stuff
         }
+        return null;
     }
 
     @Override
@@ -114,20 +116,24 @@ public class NotificationServiceOld extends Service {
 
     public List<POI> getPointsOfInterestList(String type) {
         location = checkIfLocationAvailable();
-        locationParam = new LocationParam(location.getLatitude(), location.getLongitude(), appUtil.MY_RADIUS, type);
+        pointsOfInterestList = new ArrayList<>();
+        if (location != null){
+            locationParam = new LocationParam(location.getLatitude(), location.getLongitude(), appUtil.MY_RADIUS, type);
 
-        try {
-            pointsOfInterestList = placesApi.execute(locationParam).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            try {
+                pointsOfInterestList = placesApi.execute(locationParam).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            List<POI> tempList;
+            tempList = poiDatabase.getPOI(locationParam);
+
+            pointsOfInterestList.addAll(tempList);
+
+            return pointsOfInterestList;
         }
-        List<POI> tempList;
-        tempList = poiDatabase.getPOI(locationParam);
-
-        pointsOfInterestList.addAll(tempList);
-
         return pointsOfInterestList;
     }
 }
