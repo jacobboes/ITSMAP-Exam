@@ -35,9 +35,10 @@ public class Database {
     }
 
     public void insertUpdate(POI data) {
-        if (data.uid == null)
+        if (data.uid == null) {
             data.uid = UUID.randomUUID().toString();
             poiDatabase.setValue(data);
+        }
         else {
             poiDatabase.setValue(data);
         }
@@ -77,7 +78,7 @@ public class Database {
         List<POI> returnVal = new ArrayList();
         for (DataSnapshot singleSnapshot : POI.getChildren()) {
             POI tmp = singleSnapshot.getValue(POI.class);
-            if (tmp.type.contains(data.) && withinRadius(lat, lng, radius, tmp)){
+            if (tmp.type.contains(data.getType()) && withinRadius(data.getLatitude(), data.getLongitude(), data.getRadius(), tmp)){
                 returnVal.add(tmp);
             }
         }
