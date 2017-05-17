@@ -1,5 +1,6 @@
 package com.grp16.itsmap.smapexam.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance().getReference();
         POI poi = new POI(56.170244, 10.188593, 105.0, "Storcenter Nord", "Indkøbscenter");
         database.child("POI").child(UUID.randomUUID().toString()).setValue(poi);
+
+
     }
 
     @Override
@@ -87,10 +90,16 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful() && auth.getCurrentUser() != null) {
                             Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                            startMainActivity();
                         } else {
                             Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
