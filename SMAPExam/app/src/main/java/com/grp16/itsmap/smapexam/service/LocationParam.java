@@ -23,7 +23,7 @@ public class LocationParam {
         return longitude;
     }
 
-    public double getRadius() {
+    public int getRadius() {
         return radius;
     }
 

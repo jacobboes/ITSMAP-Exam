@@ -123,9 +123,12 @@ public class NotificationServiceOld extends Service {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        poiDatabase.getPOI(locationParam);
+        List<POI> tempList;
+        tempList = poiDatabase.getPOI(locationParam);
 
-        return null;
+        pointsOfInterestList.addAll(tempList);
+
+        return pointsOfInterestList;
 
     }
 }

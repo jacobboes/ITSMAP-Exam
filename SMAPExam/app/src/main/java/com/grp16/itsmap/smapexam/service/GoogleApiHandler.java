@@ -44,7 +44,6 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>>{
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-
             // Read input into a String
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
