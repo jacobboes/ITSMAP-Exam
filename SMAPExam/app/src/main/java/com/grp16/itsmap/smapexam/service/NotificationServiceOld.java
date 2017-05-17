@@ -24,7 +24,7 @@ public class NotificationServiceOld extends Service {
     private final IBinder INotificationBinder = new NotificationBinder();
     Database poiDatabase;
     GoogleApiHandler placesApi;
-    GoogleApiParam apiParam;
+    LocationParam locationParam;
     private final Context mContext;
     private Location location;
     private LocationManager locationManager;
@@ -33,7 +33,6 @@ public class NotificationServiceOld extends Service {
     private List<POI> pointsOfInterestList;
 
     boolean isGPSEnabled = false;
-    boolean isNetworkEnabled = false;
     boolean canGetLocation = false;
 
 
@@ -46,27 +45,16 @@ public class NotificationServiceOld extends Service {
         try {
             locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            if (!isGPSEnabled && !isNetworkEnabled) {
+            if (!isGPSEnabled) {
                 Toast.makeText(mContext, "No location Provider available", Toast.LENGTH_SHORT).show();
             } else {
                 canGetLocation = true;
-                if (isNetworkEnabled) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-                    if (locationManager != null) {
-                        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            // Convert to GSON object or whatever
-
-                        }
-                    }
-                }
                 if (isGPSEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES,locationListener);
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                         if (location != null) {
-                            // Convert to GSON object or whatever
+                            return location;
                         }
                     }
                 }
@@ -74,7 +62,6 @@ public class NotificationServiceOld extends Service {
         } catch (Exception e) {
             // Handle stuff
         }
-        return location;
     }
 
     @Override
@@ -86,6 +73,10 @@ public class NotificationServiceOld extends Service {
         public NotificationServiceOld getService() {
             return NotificationServiceOld.this;
         }
+    }
+
+    public Location GetLocation() {
+        return checkIfLocationAvailable();
     }
 
     public void StopUsingLocation() {
@@ -121,23 +112,18 @@ public class NotificationServiceOld extends Service {
         }
     };
 
-    public List<POI> getPointsOfInterestList() {
-        // Get places from googleApiHandler
-        // Get places from database
-        // Call async task with location parameters from getlocation
+    public List<POI> getPointsOfInterestList(String type) {
         location = checkIfLocationAvailable();
-        appUtil.MY_LOCATION = "";
-        appUtil.MY_RADIUS = "";
-        appUtil.MY_TYPE = "";
-        apiParam = new GoogleApiParam(location.getLatitude(), location.getLongitude(), 500, appUtil.MY_TYPE);
+        locationParam = new LocationParam(location.getLatitude(), location.getLongitude(), appUtil.MY_RADIUS, type);
 
         try {
-            pointsOfInterestList = placesApi.execute(apiParam).get();
+            pointsOfInterestList = placesApi.execute(locationParam).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        poiDatabase.getPOI(locationParam);
 
         return null;
 

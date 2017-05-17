@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>{
+public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>>{
 
     @Override
-    protected List<POI> doInBackground(GoogleApiParam... params) {
+    protected List<POI> doInBackground(LocationParam... params) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         List<POI> PointsOfInterest;
@@ -37,6 +37,10 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
             URL url = new URL(appUtil.GOOGLE_PLACES_API);
 
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestProperty("location", params[0].toString() + "," + params[1].toString());
+            urlConnection.setRequestProperty("radius", params[2].toString());
+            urlConnection.setRequestProperty("type", params[3].toString());
+            urlConnection.setRequestProperty("key", appUtil.GOOGLE_PLACES_KEY);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 

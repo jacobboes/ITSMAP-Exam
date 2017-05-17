@@ -1,13 +1,13 @@
 package com.grp16.itsmap.smapexam.service;
 
 
-public class GoogleApiParam {
+public class LocationParam {
     private double latitude;
     private double longitude;
-    private double radius;
+    private int radius;
     private String type;
 
-    public GoogleApiParam (double latitude, double longitude, double radius, String type) {
+    public LocationParam(double latitude, double longitude, int radius, String type) {
 
         this.latitude = latitude;
         this.longitude = longitude;
