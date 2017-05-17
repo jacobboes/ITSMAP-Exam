@@ -9,16 +9,40 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.grp16.itsmap.smapexam.R;
+import com.grp16.itsmap.smapexam.model.POI;
+import com.grp16.itsmap.smapexam.network.Authentication;
+import com.grp16.itsmap.smapexam.network.Database;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.Collections;
+import java.util.UUID;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private Authentication authentication;
+    private Database database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initializeViews();
+        authentication = new Authentication();
+        database = new Database();
+
+        Button btn = (Button) findViewById(R.id.testInsert);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                database.insertUpdate(new POI(UUID.randomUUID().toString(), 22.12, 56.6742, "HERE", "Aarhus", Collections.singletonList("this_is_a_type")));
+            }
+        });
+    }
+
+    private void initializeViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,18 +69,18 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
+            authentication.logOut();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         } else if (id == R.id.nav_exit) {
-
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
