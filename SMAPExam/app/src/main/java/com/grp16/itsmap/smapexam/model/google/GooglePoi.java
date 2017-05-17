@@ -1,5 +1,5 @@
 
-package com.grp16.itsmap.smapexam.model;
+package com.grp16.itsmap.smapexam.model.google;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
