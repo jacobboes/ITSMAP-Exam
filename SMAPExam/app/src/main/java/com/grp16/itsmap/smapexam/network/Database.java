@@ -18,38 +18,45 @@ public class Database {
     private final String POI_COLLECTION_NAME = "POI";
     private DataSnapshot POI;
 
-    Database(){
+    Database() {
         poiDatabase = FirebaseDatabase.getInstance().getReference(POI_COLLECTION_NAME);
         listener();
     }
 
-    public void insertPoi(POI data){
+    public void insertPoi(POI data) {
         poiDatabase.push();
         //poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
     }
 
-    public void deletePoi(POI data){
-        for (DataSnapshot singleSnapshot : POI.getChildren()){
-            if (singleSnapshot.getKey().equals(data.uid)){
+    public void deletePoi(POI data) {
+        for (DataSnapshot singleSnapshot : POI.getChildren()) {
+            if (singleSnapshot.getKey().equals(data.uid)) {
                 singleSnapshot.getRef().removeValue();
                 return;
             }
         }
     }
 
-    public List<POI> getAllPOI(){
+    public List<POI> getAllPOI() {
         List<POI> returnVal = new ArrayList();
-        for (DataSnapshot singleSnapshot : POI.getChildren()){
+        for (DataSnapshot singleSnapshot : POI.getChildren()) {
             returnVal.add(singleSnapshot.getValue(POI.class));
         }
         return returnVal;
     }
 
-    public List<POI> getPOI(double lat, double lon, double radius, List<String> type){
-     return null;
+    public List<POI> getPOI(double lat, double lng, double radius, List<String> type) {
+        List<POI> returnVal = new ArrayList();
+        for (DataSnapshot singleSnapshot : POI.getChildren()) {
+            POI tmp = singleSnapshot.getValue(POI.class);
+            if (type.contains(tmp.type) && withinRadus(lat, lng, radius, tmp)){
+                returnVal.add(tmp);
+            }
+        }
+        return returnVal;
     }
 
-    private void listener(){
+    private void listener() {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -62,5 +69,18 @@ public class Database {
             }
         };
         poiDatabase.addValueEventListener(postListener);
+    }
+
+    //https://www.mullie.eu/geographic-searches/
+    private boolean withinRadus(double lat, double lng, double radius, POI poi) {
+        double phoneLat = Math.toRadians(lat);
+        double phoneLng = Math.toRadians(lng);
+        double poiLat = Math.toRadians(poi.latitude);
+        double poiLng = Math.toRadians(poi.longitude);
+
+        // earth's radius in km = ~6371
+        double distance = Math.acos(Math.sin(phoneLat) * Math.sin(poiLat) + Math.cos(phoneLat) * Math.cos(poiLat) * Math.cos(phoneLng - poiLng)) * 6371;
+
+        return distance <= radius / 1000;
     }
 }
