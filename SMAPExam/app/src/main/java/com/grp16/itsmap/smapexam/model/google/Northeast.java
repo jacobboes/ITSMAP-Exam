@@ -1,10 +1,10 @@
 
-package com.grp16.itsmap.smapexam.model;
+package com.grp16.itsmap.smapexam.model.google;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Southwest {
+public class Northeast {
 
     @SerializedName("lat")
     @Expose
