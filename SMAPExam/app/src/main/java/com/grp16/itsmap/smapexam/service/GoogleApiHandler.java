@@ -21,13 +21,14 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
     protected List<POI> doInBackground(GoogleApiParam... params) {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
+        List<POI> PointsOfInterest;
 
         // Raw JSON response as String
         String JsonStr;
         Log.i("Service", "Background call to Places API");
         try {
             // Construct the URL for Places query and open connection
-            URL url = new URL(appUtil.GOOGLE_PLACES_API;
+            URL url = new URL(appUtil.GOOGLE_PLACES_API);
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -45,9 +46,11 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
                 return null;
             }
             JsonStr = buffer.toString();
+            // Convert to GSON
 
+            // Convert to POI afterwards
 
-
+            return PointsOfInterest; // return POI objects
 
         } catch (IOException e) {
             Log.e("PlaceholderFragment", "Error ", e);

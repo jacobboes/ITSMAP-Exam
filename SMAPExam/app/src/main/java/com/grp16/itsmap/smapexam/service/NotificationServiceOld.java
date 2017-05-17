@@ -129,7 +129,7 @@ public class NotificationServiceOld extends Service {
         appUtil.MY_LOCATION = "";
         appUtil.MY_RADIUS = "";
         appUtil.MY_TYPE = "";
-        apiParam = new GoogleApiParam(location.getLatitude(), location.getLongitude(), 500, type);
+        apiParam = new GoogleApiParam(location.getLatitude(), location.getLongitude(), 500, appUtil.MY_TYPE);
 
         try {
             pointsOfInterestList = placesApi.execute(apiParam).get();
