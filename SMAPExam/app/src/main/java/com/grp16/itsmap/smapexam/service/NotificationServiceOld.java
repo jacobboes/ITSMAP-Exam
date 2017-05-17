@@ -88,7 +88,7 @@ public class NotificationServiceOld extends Service {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            pointsOfInterestList = getPointsOfInterestList();
+            //TODO pointsOfInterestList = getPointsOfInterestList();
             if (pointsOfInterestList != null) {
                 Intent broadcastPOI = new Intent();
                 broadcastPOI.setAction(appUtil.BROADCAST_LOCATION_CHANGED);
@@ -129,6 +129,5 @@ public class NotificationServiceOld extends Service {
         pointsOfInterestList.addAll(tempList);
 
         return pointsOfInterestList;
-
     }
 }
