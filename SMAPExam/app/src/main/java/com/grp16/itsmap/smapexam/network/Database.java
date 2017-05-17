@@ -32,11 +32,14 @@ public class Database {
         listener();
     }
 
-    public void insert(POI data) {
-        poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
+    public void insertUpdate(POI data) {
+        if (data.uid == null)
+            poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
+        else
+            poiDatabase.child(data.uid).setValue(data);
     }
 
-    public void insert(UserCustomInfo data){
+    public void insertUpdate(UserCustomInfo data){
         userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(data);
     }
 
@@ -58,7 +61,7 @@ public class Database {
         }
     }
 
-    public List<POI> getAllPOI() {
+    public List<POI> getPOI() {
         List<POI> returnVal = new ArrayList();
         for (DataSnapshot singleSnapshot : POI.getChildren()) {
             returnVal.add(singleSnapshot.getValue(POI.class));
@@ -70,7 +73,7 @@ public class Database {
         List<POI> returnVal = new ArrayList();
         for (DataSnapshot singleSnapshot : POI.getChildren()) {
             POI tmp = singleSnapshot.getValue(POI.class);
-            if (type.contains(tmp.type) && withinRadus(lat, lng, radius, tmp)){
+            if (type.contains(tmp.type) && withinRadius(lat, lng, radius, tmp)){
                 returnVal.add(tmp);
             }
         }
@@ -113,7 +116,7 @@ public class Database {
     }
 
     //https://www.mullie.eu/geographic-searches/
-    private boolean withinRadus(double lat, double lng, int radius, POI poi) {
+    private boolean withinRadius(double lat, double lng, int radius, POI poi) {
         double phoneLat = Math.toRadians(lat);
         double phoneLng = Math.toRadians(lng);
         double poiLat = Math.toRadians(poi.latitude);
