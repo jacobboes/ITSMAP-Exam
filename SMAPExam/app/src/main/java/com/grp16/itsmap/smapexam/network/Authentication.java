@@ -21,7 +21,7 @@ public class Authentication {
         return auth.getCurrentUser();
     }
 
-    public boolean isLogedIn() {
+    public boolean isLoggedIn() {
         return auth.getCurrentUser() != null;
     }
 
