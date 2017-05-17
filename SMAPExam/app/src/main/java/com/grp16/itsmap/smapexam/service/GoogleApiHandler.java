@@ -4,8 +4,9 @@ package com.grp16.itsmap.smapexam.service;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.grp16.itsmap.smapexam.model.GooglePoi;
+import com.grp16.itsmap.smapexam.model.google.GooglePoi;
 import com.grp16.itsmap.smapexam.model.POI;
+import com.grp16.itsmap.smapexam.model.google.Result;
 import com.grp16.itsmap.smapexam.util.appUtil;
 
 import com.google.gson.Gson;
@@ -16,7 +17,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>{
 
@@ -49,12 +52,8 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
                 return null;
             }
             JsonStr = buffer.toString();
-            // Convert to GSON
-
-            // Convert to POI afterwards
-
-            return PointsOfInterest; // return POI objects
-
+            PointsOfInterest = JsonToGooglePoi(JsonStr);
+            return PointsOfInterest;
         } catch (IOException e) {
             Log.e("PlaceholderFragment", "Error ", e);
             return null;
@@ -73,8 +72,14 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
         }
     }
 
-    private POI JsonToGooglePoi(String s) {
+    private List<POI> JsonToGooglePoi(String s) {
         Gson gson = new GsonBuilder().create();
-
+        GooglePoi googlePoi = gson.fromJson(s, GooglePoi.class);
+        List<POI> returnList = new ArrayList<>();
+        for (Result result : googlePoi.results) {
+            returnList.add(new POI(UUID.randomUUID().toString(),result.geometry.location.lat,
+                    result.geometry.location.lat, result.name, result.vicinity, result.types));
+        }
+        return returnList;
     }
 }
