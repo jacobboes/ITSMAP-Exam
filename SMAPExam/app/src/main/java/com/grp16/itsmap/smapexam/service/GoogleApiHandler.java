@@ -4,9 +4,12 @@ package com.grp16.itsmap.smapexam.service;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.grp16.itsmap.smapexam.model.GooglePoi;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.util.appUtil;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,5 +71,10 @@ public class GoogleApiHandler extends AsyncTask<GoogleApiParam, Void, List<POI>>
                 }
             }
         }
+    }
+
+    private POI JsonToGooglePoi(String s) {
+        Gson gson = new GsonBuilder().create();
+
     }
 }
