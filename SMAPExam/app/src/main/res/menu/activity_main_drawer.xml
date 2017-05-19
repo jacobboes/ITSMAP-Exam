@@ -5,19 +5,19 @@
         <item
             android:id="@+id/nav_camera"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Camera" />
+            android:title="@string/navbar_camera" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Settings" />
+            android:title="@string/navbar_settings" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_share"
-            android:title="Logout" />
+            android:title="@string/navbar_logout" />
         <item
             android:id="@+id/nav_exit"
             android:icon="@drawable/ic_menu_send"
-            android:title="Exit" />
+            android:title="@string/navbar_exit" />
     </group>
 
 </menu>
