@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.model.UserCustomInfo;
@@ -28,6 +29,7 @@ public class Database {
 
     public Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.setLogLevel(Logger.Level.DEBUG);
         poiDatabase = database.getReference(POI_COLLECTION_NAME);
         auth = FirebaseAuth.getInstance();
         userDatabase = database.getReference(USER_COLLECTION_NAME);
