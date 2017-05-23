@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 database.insertUpdate(new POI(UUID.randomUUID().toString(), 22.12, 56.6742, "HERE", "Aarhus", Collections.singletonList("this_is_a_type")));
+                if (database.getPOI() != null) {
+                    for (POI l2 : database.getPOI()) {
+                        Log.d("db", l2.uid);
+                    }
+                }
             }
         });
     }

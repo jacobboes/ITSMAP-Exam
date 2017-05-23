@@ -24,8 +24,8 @@ public class Database {
     private FirebaseAuth auth;
     private final String POI_COLLECTION_NAME = "POI";
     private final String USER_COLLECTION_NAME = "User";
-    private DataSnapshot POI;
-    private DataSnapshot User;
+    private List<POI> poiList = new ArrayList();
+    private UserCustomInfo user = new UserCustomInfo();
 
     public Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -38,11 +38,10 @@ public class Database {
 
     public void insertUpdate(POI data) {
         if (data.uid == null) {
-            data.uid = UUID.randomUUID().toString();
-            poiDatabase.setValue(data);
+            poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
         }
         else {
-            poiDatabase.setValue(data);
+            poiDatabase.child(data.uid).setValue(data);
         }
     }
 
@@ -51,54 +50,40 @@ public class Database {
     }
 
     public void delete(POI data) {
-        for (DataSnapshot singleSnapshot : POI.getChildren()) {
-            if (singleSnapshot.getKey().equals(data.uid)) {
-                singleSnapshot.getRef().removeValue();
-                return;
-            }
-        }
+        poiDatabase.child(data.uid).removeValue();
     }
 
     public void delete(UserCustomInfo data) {
-        for (DataSnapshot singleSnapshot : User.getChildren()) {
-            if (singleSnapshot.getKey().equals(data.uid)) {
-                singleSnapshot.getRef().removeValue();
-                return;
-            }
-        }
+        userDatabase.child(data.uid).removeValue();
     }
 
     public List<POI> getPOI() {
-        List<POI> returnVal = new ArrayList();
-        for (DataSnapshot singleSnapshot : POI.getChildren()) {
-            returnVal.add(singleSnapshot.getValue(POI.class));
-        }
-        return returnVal;
+        return poiList;
     }
 
     public List<POI> getPOI(LocationParam data) {
         List<POI> returnVal = new ArrayList();
-        for (DataSnapshot singleSnapshot : POI.getChildren()) {
-            POI tmp = singleSnapshot.getValue(POI.class);
-            if (tmp.type.contains(data.getType()) && withinRadius(data.getLatitude(), data.getLongitude(), data.getRadius(), tmp)){
-                returnVal.add(tmp);
+            for (POI singlePoi : poiList) {
+                if (singlePoi.type.contains(data.getType()) && withinRadius(data.getLatitude(), data.getLongitude(), data.getRadius(), singlePoi)) {
+                    returnVal.add(singlePoi);
+                }
             }
-        }
         return returnVal;
     }
 
-    public List<String> getTypes(){
-        for (DataSnapshot singleSnapshot : POI.getChildren()) {
-            return singleSnapshot.getValue(UserCustomInfo.class).poiType;
-        }
-        return null;
+    public List<String> getUserSelectedTypes(){
+        return user.poiType;
     }
 
     private void listener() {
         ValueEventListener poiPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                POI = dataSnapshot;
+                List<POI> returnval = new ArrayList();
+                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                    returnval.add(messageSnapshot.getValue(POI.class));
+                }
+                poiList = returnval;
             }
 
             @Override
@@ -111,7 +96,13 @@ public class Database {
         ValueEventListener userPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User = dataSnapshot;
+                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                    UserCustomInfo tmp = messageSnapshot.getValue(UserCustomInfo.class);
+                    if (tmp.uid == auth.getCurrentUser().getUid().toString()){
+                        user = tmp;
+                        return;
+                    }
+                }
             }
 
             @Override

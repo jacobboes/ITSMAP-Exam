@@ -7,11 +7,11 @@ public class UserCustomInfo {
     public String uid;
     public List<String> poiType;
 
-    UserCustomInfo(){
+    public UserCustomInfo(){
 
     }
 
-    UserCustomInfo(String uid, List<String> poiType){
+    public UserCustomInfo(String uid, List<String> poiType){
         this.uid = uid;
         this.poiType = poiType;
     }
