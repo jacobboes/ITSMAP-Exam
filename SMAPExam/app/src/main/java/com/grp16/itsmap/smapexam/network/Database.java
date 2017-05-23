@@ -7,7 +7,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.model.UserCustomInfo;
@@ -29,13 +28,12 @@ public class Database {
 
     private static final Database ourInstance = new Database();
 
-    static Database getInstance() {
+    public static Database getInstance() {
         return ourInstance;
     }
 
     private Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.setLogLevel(Logger.Level.DEBUG);
         poiDatabase = database.getReference(POI_COLLECTION_NAME);
         auth = FirebaseAuth.getInstance();
         userDatabase = database.getReference(USER_COLLECTION_NAME);
@@ -45,13 +43,12 @@ public class Database {
     public void insertUpdate(POI data) {
         if (data.uid == null) {
             poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
-        }
-        else {
+        } else {
             poiDatabase.child(data.uid).setValue(data);
         }
     }
 
-    public void insertUpdate(UserCustomInfo data){
+    public void insertUpdate(UserCustomInfo data) {
         userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(data);
     }
 
@@ -69,15 +66,15 @@ public class Database {
 
     public List<POI> getPOI(LocationParam data) {
         List<POI> returnVal = new ArrayList();
-            for (POI singlePoi : poiList) {
-                if (singlePoi.type.contains(data.getType()) && withinRadius(data.getLatitude(), data.getLongitude(), data.getRadius(), singlePoi)) {
-                    returnVal.add(singlePoi);
-                }
+        for (POI singlePoi : poiList) {
+            if (singlePoi.type.contains(data.getType()) && withinRadius(data, singlePoi)) {
+                returnVal.add(singlePoi);
             }
+        }
         return returnVal;
     }
 
-    public List<String> getUserSelectedTypes(){
+    public List<String> getUserSelectedTypes() {
         return user.poiType;
     }
 
@@ -86,7 +83,7 @@ public class Database {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<POI> returnval = new ArrayList();
-                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     returnval.add(messageSnapshot.getValue(POI.class));
                 }
                 poiList = returnval;
@@ -102,9 +99,9 @@ public class Database {
         ValueEventListener userPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     UserCustomInfo tmp = messageSnapshot.getValue(UserCustomInfo.class);
-                    if (tmp.uid == auth.getCurrentUser().getUid().toString()){
+                    if (tmp.uid == auth.getCurrentUser().getUid().toString()) {
                         user = tmp;
                         return;
                     }
@@ -120,15 +117,15 @@ public class Database {
     }
 
     //https://www.mullie.eu/geographic-searches/
-    private boolean withinRadius(double lat, double lng, int radius, POI poi) {
-        double phoneLat = Math.toRadians(lat);
-        double phoneLng = Math.toRadians(lng);
+    private boolean withinRadius(LocationParam location, POI poi) {
+        double phoneLat = Math.toRadians(location.getLatitude());
+        double phoneLng = Math.toRadians(location.getLongitude());
         double poiLat = Math.toRadians(poi.latitude);
         double poiLng = Math.toRadians(poi.longitude);
 
         // earth's radius in km = ~6371
-        double distance = Math.acos(Math.sin(phoneLat) * Math.sin(poiLat) + Math.cos(phoneLat) * Math.cos(poiLat) * Math.cos(phoneLng - poiLng)) * 6371;
+        double distance = Math.acos(Math.sin(phoneLat) * Math.sin(poiLat) + Math.cos(phoneLat) * Math.cos(poiLat) * Math.cos(phoneLng - poiLng)) * 6371 * 1000;
 
-        return distance <= radius / 1000;
+        return distance <= location.getRadius();
     }
 }
