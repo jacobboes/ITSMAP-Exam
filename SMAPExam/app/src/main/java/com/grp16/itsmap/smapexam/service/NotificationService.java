@@ -3,54 +3,66 @@ package com.grp16.itsmap.smapexam.service;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.grp16.itsmap.smapexam.model.POI;
+import com.grp16.itsmap.smapexam.network.Database;
+import com.grp16.itsmap.smapexam.util.AppUtil;
 
-public class NotificationService extends Service
-        implements GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks,
-        LocationListener {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+
+public class NotificationService extends Service {
 
     private final IBinder INotificationBinder = new NotificationBinder();
-    private static final String TAG = NotificationService.class.getSimpleName();
-    private GoogleMap mMap;
-    private CameraPosition mCameraPosition;
-    private GoogleApiClient mGoogleApiClient;
+    Database poiDatabase;
+    //    GoogleApiHandler placesApi;
+    LocationParam locationParam;
+    //    private final Context mContext;
+    private Location location;
+    private LocationManager locationManager;
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // meters
+    private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 60 * 1; // 1 minute
+    private List<POI> pointsOfInterestList;
 
-    private Location mLastKnownLocation;
+    boolean isGPSEnabled = false;
+    boolean canGetLocation = false;
 
-    private boolean mLocationPermissionGranted;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     public NotificationService() {
+//        placesApi = new GoogleApiHandler();
+        poiDatabase = Database.getInstance();
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        // Build the Play services client for use by the Fused Location Provider and the Places API
-        // Use addApi() method to request Google Places Api and Fused Location Provider
-        // Courtesy of https://developers.google.com/maps/documentation/android-api/current-place-tutorial
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .build();
+    private Location checkIfLocationAvailable() {
+        try {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            if (!isGPSEnabled) {
+                Toast.makeText(this, "No location Provider available", Toast.LENGTH_SHORT).show();
+            } else {
+                canGetLocation = true;
+                if (isGPSEnabled) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+                    if (locationManager != null) {
+                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (location != null) {
+                            return location;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Handle stuff
+        }
+        return null;
     }
 
     @Override
@@ -58,41 +70,71 @@ public class NotificationService extends Service
         return INotificationBinder;
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // throw stuff
-        // throw stuff
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastKnownLocation != null) {
-            // Do stuff to DTO?
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    protected void createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(15000);
-        mLocationRequest.setFastestInterval(10000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    // Returns service to main activity
     public class NotificationBinder extends Binder {
         public NotificationService getService() {
             return NotificationService.this;
         }
     }
+
+    public Location GetLocation() {
+        return checkIfLocationAvailable();
+    }
+
+    public void StopUsingLocation() {
+        if (locationManager != null) {
+            locationManager.removeUpdates(locationListener);
+        }
+    }
+
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            //TODO pointsOfInterestList = getPointsOfInterestList();
+            if (pointsOfInterestList != null) {
+                Intent broadcastPOI = new Intent();
+                broadcastPOI.setAction(AppUtil.BROADCAST_LOCATION_CHANGED);
+                sendBroadcast(broadcastPOI);
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+    public List<POI> getPointsOfInterestList(String type) {
+        location = checkIfLocationAvailable();
+        pointsOfInterestList = new ArrayList<>();
+        if (location != null) {
+            locationParam = new LocationParam(location.getLatitude(), location.getLongitude(), AppUtil.MY_RADIUS, type);
+
+            try {
+                pointsOfInterestList = new GoogleApiHandler().execute(locationParam).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            List<POI> tempList;
+            tempList = poiDatabase.getPOI(locationParam);
+
+            pointsOfInterestList.addAll(tempList);
+
+            return pointsOfInterestList;
+        }
+        return pointsOfInterestList;
+    }
+
+
 }

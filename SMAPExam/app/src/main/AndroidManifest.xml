@@ -31,10 +31,6 @@
             android:name=".service.NotificationService"
             android:enabled="true"
             android:exported="true" />
-        <service
-            android:name=".service.NotificationServiceOld"
-            android:enabled="true"
-            android:exported="true" />
 
         <activity
             android:name=".app.MainActivity"

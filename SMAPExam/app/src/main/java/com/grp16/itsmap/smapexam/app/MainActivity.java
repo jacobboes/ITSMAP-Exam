@@ -23,7 +23,7 @@ import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
-import com.grp16.itsmap.smapexam.service.NotificationServiceOld;
+import com.grp16.itsmap.smapexam.service.NotificationService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private boolean isServiceBound;
     private ServiceConnection connection = getServiceConnection();
-    private NotificationServiceOld service;
+    private NotificationService service;
 
     private ListView testList;
     private ArrayAdapter<String> adapter;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startService(new Intent(this, NotificationServiceOld.class));
+        startService(new Intent(this, NotificationService.class));
 
         testList = (ListView) findViewById(R.id.testList);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, places);
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, NotificationServiceOld.class);
+        Intent intent = new Intent(this, NotificationService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
-                NotificationServiceOld.NotificationBinder binder = (NotificationServiceOld.NotificationBinder) service;
+                NotificationService.NotificationBinder binder = (NotificationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
             }
