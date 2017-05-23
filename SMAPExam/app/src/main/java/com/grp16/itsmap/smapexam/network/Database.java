@@ -27,7 +27,13 @@ public class Database {
     private List<POI> poiList = new ArrayList();
     private UserCustomInfo user = new UserCustomInfo();
 
-    public Database() {
+    private static final Database ourInstance = new Database();
+
+    static Database getInstance() {
+        return ourInstance;
+    }
+
+    private Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.setLogLevel(Logger.Level.DEBUG);
         poiDatabase = database.getReference(POI_COLLECTION_NAME);
