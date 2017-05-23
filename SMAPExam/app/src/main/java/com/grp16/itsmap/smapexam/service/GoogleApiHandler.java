@@ -176,7 +176,7 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> 
         int counter = 0;
         for (POI poi : list) {
             builder.append(poi.latitude + "," + poi.longitude);
-            if (counter++ != list.size()) {
+            if (++counter != list.size()) {
                 builder.append("|");
             }
         }

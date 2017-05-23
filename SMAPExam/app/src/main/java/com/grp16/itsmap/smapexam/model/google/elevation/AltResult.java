@@ -9,7 +9,7 @@ public class AltResult {
 
     @SerializedName("elevation")
     @Expose
-    public Integer elevation;
+    public double elevation;
     @SerializedName("location")
     @Expose
     public Location location;
