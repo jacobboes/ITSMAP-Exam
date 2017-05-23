@@ -34,6 +34,7 @@ public class Database {
 
     private Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.setPersistenceEnabled(true);
         poiDatabase = database.getReference(POI_COLLECTION_NAME);
         auth = FirebaseAuth.getInstance();
         userDatabase = database.getReference(USER_COLLECTION_NAME);
