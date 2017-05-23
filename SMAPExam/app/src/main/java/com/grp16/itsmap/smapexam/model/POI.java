@@ -9,6 +9,7 @@ public class POI {
     public String uid;
     public double latitude;
     public double longitude;
+    public double altitude;
     public String name;
     public String vicinity;
     public List<String> type;

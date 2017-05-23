@@ -135,4 +135,6 @@ public class NotificationServiceOld extends Service {
         }
         return pointsOfInterestList;
     }
+
+
 }
