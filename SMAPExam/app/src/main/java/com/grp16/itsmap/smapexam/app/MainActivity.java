@@ -8,16 +8,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
@@ -25,20 +23,16 @@ import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
 import com.grp16.itsmap.smapexam.service.NotificationService;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TestServiceInteraction, SelectTypesInteraction {
     private Authentication authentication;
     private Database database;
 
     private boolean isServiceBound;
     private ServiceConnection connection = getServiceConnection();
     private NotificationService service;
-
-    private ListView testList;
-    private ArrayAdapter<String> adapter;
-    private List<String> places = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,22 +41,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         startService(new Intent(this, NotificationService.class));
 
-        testList = (ListView) findViewById(R.id.testList);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, places);
-        testList.setAdapter(adapter);
-
         initializeViews();
+        startARCamera(true);
         authentication = new Authentication();
         database = Database.getInstance();
-
-        Button btn = (Button) findViewById(R.id.testInsert);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                database.insertUpdate(new POI(UUID.randomUUID().toString(), 22.12, 56.6742, "HERE", "Aarhus", Collections.singletonList("this_is_a_type")));
-                testService();
-            }
-        });
     }
 
     private void initializeViews() {
@@ -110,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-
+            startARCamera(false);
         } else if (id == R.id.nav_settings) {
-
+            startSettings();
         } else if (id == R.id.nav_logout) {
             authentication.logOut();
             startActivity(new Intent(this, LoginActivity.class));
@@ -124,6 +106,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startARCamera(boolean isStartUp) {
+        Fragment fragment = TestServiceFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (isStartUp) {
+            transaction.add(R.id.main_fragment_container, fragment);
+        } else {
+            transaction.replace(R.id.main_fragment_container, fragment);
+        }
+        transaction.commit();
+    }
+
+    private void startSettings() {
+        Fragment fragment = SelectTypesFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     @NonNull
@@ -144,14 +145,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
     }
 
-    private void testService() {
+    @Override
+    public List<POI> getPois() {
         if (isServiceBound) {
-            List<POI> restaurants = service.getPointsOfInterestList("restaurant");
-            places.clear();
-            for (POI restaurant : restaurants) {
-                places.add(restaurant.name);
-            }
-            adapter.notifyDataSetChanged();
+            return service.getPointsOfInterestList("restaurant");
         }
+        return Collections.emptyList();
     }
 }
