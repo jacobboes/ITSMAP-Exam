@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
+import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class TestServiceFragment extends Fragment {
     private ArrayAdapter<String> adapter;
     private List<String> places = new ArrayList<>();
 
-    private TestServiceInteraction activity;
+    private ServiceWrapper activity;
 
     public TestServiceFragment() {
         // Required empty public constructor
@@ -61,8 +62,8 @@ public class TestServiceFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof TestServiceInteraction) {
-            activity = (TestServiceInteraction) context;
+        if (context instanceof ServiceWrapper) {
+            activity = (ServiceWrapper) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement TestServiceInteraction");
         }
@@ -76,7 +77,7 @@ public class TestServiceFragment extends Fragment {
 
     private void onTestClicked() {
         if (activity != null) {
-            List<POI> pois = activity.getPois();
+            List<POI> pois = activity.getPoiList();
             places.clear();
             for (POI poi : pois) {
                 places.add(poi.name);

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class NotificationService extends Service {
+public class LocationService extends Service {
 
     private final IBinder INotificationBinder = new NotificationBinder();
     Database poiDatabase;
@@ -30,14 +30,14 @@ public class NotificationService extends Service {
     private Location location;
     private LocationManager locationManager;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // meters
-    private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_TIME_BETWEEN_UPDATES = 1; // 1 minute
     private List<POI> pointsOfInterestList;
 
     boolean isGPSEnabled = false;
     boolean canGetLocation = false;
 
 
-    public NotificationService() {
+    public LocationService() {
     }
 
     @Override
@@ -82,8 +82,8 @@ public class NotificationService extends Service {
     }
 
     public class NotificationBinder extends Binder {
-        public NotificationService getService() {
-            return NotificationService.this;
+        public LocationService getService() {
+            return LocationService.this;
         }
     }
 

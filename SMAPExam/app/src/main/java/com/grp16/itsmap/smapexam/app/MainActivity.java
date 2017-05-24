@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -26,19 +27,24 @@ import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
-import com.grp16.itsmap.smapexam.service.NotificationService;
+import com.grp16.itsmap.smapexam.service.LocationService;
+import com.grp16.itsmap.smapexam.util.AppUtil;
+import com.grp16.itsmap.smapexam.util.NotificationReceiver;
+import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TestServiceInteraction, SelectTypesInteraction {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SelectTypesInteraction, ServiceWrapper {
     private Authentication authentication;
     private Database database;
 
     private boolean isServiceBound;
     private ServiceConnection connection = getServiceConnection();
-    private NotificationService service;
+    private LocationService service;
+    private NotificationReceiver notificationReceiver;
+    private ServiceWrapper serviceWrapper;
 
     private ListView testList;
     private ArrayAdapter<String> adapter;
@@ -51,10 +57,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startService(new Intent(this, NotificationService.class));
+        startService(new Intent(this, LocationService.class));
 
         initializeViews();
         startARCamera(true);
+        setupNotificationReceiver();
         authentication = new Authentication();
         database = Database.getInstance();
     }
@@ -84,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, NotificationService.class);
+        Intent intent = new Intent(this, LocationService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         requestCameraPermission();
         requestLocationPermission();
@@ -147,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
-                NotificationService.NotificationBinder binder = (NotificationService.NotificationBinder) service;
+                LocationService.NotificationBinder binder = (LocationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
             }
@@ -158,16 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
     }
-
-    @Override
-    public List<POI> getPois() {
-        if (isServiceBound) {
-            return service.getPointsOfInterestList("restaurant");
-        }
-        return Collections.emptyList();
-    }
-
-
+    
     private void requestCameraPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -182,4 +180,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void setupNotificationReceiver() {
+        notificationReceiver = new NotificationReceiver(serviceWrapper);
+        registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
+    }
+
+    @Override
+    public List<POI> getPoiList() {
+        if (isServiceBound) {
+            //TODO Update hardcoded type
+            return service.getPointsOfInterestList("restaurant");
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }

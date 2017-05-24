@@ -27,7 +27,7 @@
             android:value="@string/google_maps_key" />
 
         <service
-            android:name=".service.NotificationService"
+            android:name=".service.LocationService"
             android:enabled="true"
             android:exported="true" />
 
