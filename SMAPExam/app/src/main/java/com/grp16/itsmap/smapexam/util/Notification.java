@@ -6,12 +6,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.app.MainActivity;
-
 import static android.content.Context.NOTIFICATION_SERVICE;
 
+//https://developer.android.com/training/notify-user/build-notification.html
 public class Notification {
     private Context context;
 
