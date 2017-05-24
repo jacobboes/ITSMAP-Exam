@@ -188,7 +188,7 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> 
         GooglePoi googlePoi = gson.fromJson(s, GooglePoi.class);
         List<POI> returnList = new ArrayList<>();
         for (Result result : googlePoi.results) {
-            returnList.add(new POI(UUID.randomUUID().toString(), result.geometry.location.lat,
+            returnList.add(new POI(result.placeId, result.geometry.location.lat,
                     result.geometry.location.lng, result.name, result.vicinity, result.types));
         }
         return returnList;

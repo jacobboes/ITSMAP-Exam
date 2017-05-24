@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.grp16.itsmap.smapexam.model.POI;
@@ -23,9 +24,7 @@ public class NotificationService extends Service {
 
     private final IBinder INotificationBinder = new NotificationBinder();
     Database poiDatabase;
-    //    GoogleApiHandler placesApi;
     LocationParam locationParam;
-    //    private final Context mContext;
     private Location location;
     private LocationManager locationManager;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // meters
@@ -37,30 +36,39 @@ public class NotificationService extends Service {
 
 
     public NotificationService() {
-//        placesApi = new GoogleApiHandler();
-        poiDatabase = Database.getInstance();
     }
 
-    private Location checkIfLocationAvailable() {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        poiDatabase = Database.getInstance();
         try {
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (!isGPSEnabled) {
-                Toast.makeText(this, "No location Provider available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No location provider available", Toast.LENGTH_SHORT).show();
             } else {
-                canGetLocation = true;
-                if (isGPSEnabled) {
+                if (locationManager != null) {
+                    canGetLocation = true;
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-                    if (locationManager != null) {
-                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        if (location != null) {
-                            return location;
-                        }
-                    }
                 }
             }
         } catch (Exception e) {
-            // Handle stuff
+            Log.e("Placeholder", "Error while initializing LocationUpdates", e);
+        }
+    }
+
+    private Location checkIfLocationAvailable() {
+        try {
+            if (locationManager != null) {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    return location;
+                }
+            }
+        } catch (Exception e) {
+            Log.e("Placeholder", "Error while receiving last known location", e);
         }
         return null;
     }
@@ -76,11 +84,7 @@ public class NotificationService extends Service {
         }
     }
 
-    public Location GetLocation() {
-        return checkIfLocationAvailable();
-    }
-
-    public void StopUsingLocation() {
+    public void StopGettingLocationUpdates() {
         if (locationManager != null) {
             locationManager.removeUpdates(locationListener);
         }
@@ -89,7 +93,6 @@ public class NotificationService extends Service {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            //TODO pointsOfInterestList = getPointsOfInterestList();
             if (pointsOfInterestList != null) {
                 Intent broadcastPOI = new Intent();
                 broadcastPOI.setAction(AppUtil.BROADCAST_LOCATION_CHANGED);
