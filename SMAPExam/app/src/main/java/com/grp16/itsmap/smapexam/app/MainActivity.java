@@ -189,9 +189,11 @@ public class MainActivity extends AppCompatActivity
         notificationReceiver = new NotificationReceiver(this);
         registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
 
+        // Testing broadcast listeners
         testAddListener();
     }
 
+    // Exposes List from Service to other activities
     @Override
     public List<POI> getPoiList() {
         if (isServiceBound) {
@@ -202,6 +204,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    // Test to expose location to Fragment
     @Override
     public Location getLocation() {
         if (isServiceBound) {
@@ -210,12 +213,14 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
+    // Testing broadcast
     @Override
     public void dataReady(List<POI> data) {
         Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
         //TODO Do stuff to update View with new items from list
     }
 
+    // Testing broadcast
     private void testAddListener() {
         notificationReceiver.addListener(this);
     }
