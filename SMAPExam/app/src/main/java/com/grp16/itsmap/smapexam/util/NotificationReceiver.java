@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.grp16.itsmap.smapexam.model.google.places.Location;
+
 import java.util.ArrayList;
 import java.util.List;
 

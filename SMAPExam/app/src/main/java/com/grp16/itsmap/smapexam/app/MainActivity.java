@@ -22,21 +22,27 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
+import android.location.Location;
 import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
 import com.grp16.itsmap.smapexam.service.LocationService;
 import com.grp16.itsmap.smapexam.util.AppUtil;
 import com.grp16.itsmap.smapexam.util.NotificationReceiver;
+import com.grp16.itsmap.smapexam.util.PoiListener;
 import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SelectTypesInteraction, ServiceWrapper {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, SelectTypesInteraction,
+        ServiceWrapper, PoiListener {
+
     private Authentication authentication;
     private Database database;
 
@@ -44,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ServiceConnection connection = getServiceConnection();
     private LocationService service;
     private NotificationReceiver notificationReceiver;
-    private ServiceWrapper serviceWrapper;
 
     private ListView testList;
     private ArrayAdapter<String> adapter;
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
     }
-    
+
     private void requestCameraPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -181,8 +186,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupNotificationReceiver() {
-        notificationReceiver = new NotificationReceiver(serviceWrapper);
+        notificationReceiver = new NotificationReceiver(this);
         registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
+
+        testAddListener();
     }
 
     @Override
@@ -193,5 +200,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    public Location getLocation() {
+        if (isServiceBound) {
+            return service.getLocation();
+        }
+        return null;
+    }
+
+    @Override
+    public void dataReady(List<POI> data) {
+        Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
+        //TODO Do stuff to update View with new items from list
+    }
+
+    private void testAddListener() {
+        notificationReceiver.addListener(this);
     }
 }

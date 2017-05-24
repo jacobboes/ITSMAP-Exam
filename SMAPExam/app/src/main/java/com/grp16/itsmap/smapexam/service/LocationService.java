@@ -93,6 +93,10 @@ public class LocationService extends Service {
         }
     }
 
+    public Location getLocation() {
+        return checkIfLocationAvailable();
+    }
+
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
