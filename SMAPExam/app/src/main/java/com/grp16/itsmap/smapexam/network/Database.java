@@ -49,16 +49,15 @@ public class Database {
         }
     }
 
-    public void insertUpdate(UserCustomInfo data) {
-        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(data);
+    public void insertUpdate(List<String> types) {
+        UserCustomInfo tmp = new UserCustomInfo();
+        tmp.uid=auth.getCurrentUser().getUid().toString();
+        tmp.poiType = types;
+        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(tmp);
     }
 
     public void delete(POI data) {
         poiDatabase.child(data.uid).removeValue();
-    }
-
-    public void delete(UserCustomInfo data) {
-        userDatabase.child(data.uid).removeValue();
     }
 
     public List<POI> getPOI() {
