@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Database;
 import com.grp16.itsmap.smapexam.util.AppUtil;
+import com.grp16.itsmap.smapexam.util.Notification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class NotificationService extends Service {
     private final IBinder INotificationBinder = new NotificationBinder();
     Database poiDatabase;
     LocationParam locationParam;
+    Notification notification;
     private Location location;
     private LocationManager locationManager;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // meters
@@ -43,6 +45,7 @@ public class NotificationService extends Service {
         super.onCreate();
 
         poiDatabase = Database.getInstance();
+        notification = new Notification(this);
         try {
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -94,6 +97,7 @@ public class NotificationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             if (pointsOfInterestList != null) {
+                notification.Send("Location changed", "New points of interest available");
                 Intent broadcastPOI = new Intent();
                 broadcastPOI.setAction(AppUtil.BROADCAST_LOCATION_CHANGED);
                 sendBroadcast(broadcastPOI);
