@@ -94,11 +94,13 @@ public class AROverlayView extends View implements PoiListener{
         final int radius = 30;
         int width = canvas.getWidth();
         int height = canvas.getHeight();
+        /*
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.WHITE);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
         paint.setTextSize(60);
+        */
 
         ReentrantLock lock = new ReentrantLock();
         threadResults = new ArrayList<>();
@@ -115,6 +117,14 @@ public class AROverlayView extends View implements PoiListener{
             e.printStackTrace();
         }
         for (DrawObj obj : threadResults){
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.WHITE);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            paint.setTextSize(60);
+
+            //TODO enum whit type string and color
+
             canvas.drawCircle(obj.x, obj.y, radius, paint);
             canvas.drawText(obj.name, obj.x - (30 * obj.name.length() / 2), obj.y - 80, paint);
         }
@@ -153,6 +163,7 @@ public class AROverlayView extends View implements PoiListener{
                 drawObj.x = (0.5f + cameraCoordinateVector[0] / cameraCoordinateVector[3]) * width;
                 drawObj.y = (0.5f - cameraCoordinateVector[1] / cameraCoordinateVector[3]) * height;
                 drawObj.name = poi.name;
+                drawObj.type = poi.type;
 
                 lock.lock();
                 try {
@@ -171,6 +182,6 @@ public class AROverlayView extends View implements PoiListener{
         public float x;
         public float y;
         public String name;
-
+        public List<String> type;
     }
 }

@@ -19,7 +19,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(AppUtil.BROADCAST_LOCATION_CHANGED)) {
+        if (intent.getAction().equals(AppUtil.BROADCAST_LOCATION_CHANGED) || intent.getAction().equals(AppUtil.BROADCAST_TYPE_CHANGED)) {
             for (PoiListener listener : listeners) {
                 listener.dataReady(service.getPoiList());
             }
