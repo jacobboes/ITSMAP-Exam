@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,5 +8,21 @@
     tools:context="com.grp16.itsmap.smapexam.app.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <inclue layout="@layout/required_layout"/>
-</RelativeLayout>
+    <include
+        layout="@layout/required_layout"
+        android:id="@+id/include" />
+
+    <ImageView
+        android:id="@+id/meme_imgView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/meme_img_desc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/include"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/meme_layout" />
+
+</android.support.constraint.ConstraintLayout>
