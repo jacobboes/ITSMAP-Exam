@@ -3,7 +3,11 @@ package com.grp16.itsmap.smapexam.app;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -16,33 +20,48 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
-import com.grp16.itsmap.smapexam.service.NotificationService;
+import com.grp16.itsmap.smapexam.service.LocationService;
+import com.grp16.itsmap.smapexam.util.AppUtil;
+import com.grp16.itsmap.smapexam.util.NotificationReceiver;
+import com.grp16.itsmap.smapexam.util.PoiListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TestServiceInteraction {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, SelectTypesInteraction, PoiListener {
     private Authentication authentication;
     private Database database;
 
     private boolean isServiceBound;
     private ServiceConnection connection = getServiceConnection();
-    private NotificationService service;
+    private LocationService service;
+    private NotificationReceiver notificationReceiver;
+
+    private ListView testList;
+    private ArrayAdapter<String> adapter;
+    private List<String> places = new ArrayList<>();
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startService(new Intent(this, NotificationService.class));
+        startService(new Intent(this, LocationService.class));
 
         initializeViews();
-        startARCamera(true);
+        //startARCamera(true);
+        setupNotificationReceiver();
         authentication = new Authentication();
         database = Database.getInstance();
     }
@@ -72,8 +91,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, NotificationService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        if (!isServiceBound) {
+            Intent intent = new Intent(this, LocationService.class);
+            bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        }
+        requestLocationPermission();
+        requestCameraPermission();
     }
 
     @Override
@@ -109,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void startARCamera(boolean isStartUp) {
-        Fragment fragment = TestServiceFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
+        Fragment fragment = ARCameraFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (isStartUp) {
             transaction.add(R.id.main_fragment_container, fragment);
@@ -133,9 +156,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
-                NotificationService.NotificationBinder binder = (NotificationService.NotificationBinder) service;
+                LocationService.NotificationBinder binder = (LocationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
+                startARCamera(true);
             }
 
             @Override
@@ -145,11 +169,71 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
     }
 
-    @Override
-    public List<POI> getPois() {
-        if (isServiceBound) {
-            return service.getPointsOfInterestList("restaurant");
+    private void requestCameraPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
         }
-        return Collections.emptyList();
+    }
+
+    private void requestLocationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    private void setupNotificationReceiver() {
+        notificationReceiver = new NotificationReceiver(this);
+        registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
+
+        // Testing broadcast listeners
+        testAddListener();
+    }
+
+    // Exposes List from Service to other activities
+    @Override
+    public List<POI> getPoiList() {
+        if (isServiceBound) {
+            List<String> types = database.getUserSelectedTypes();
+            List<POI> returnList = new ArrayList<>();
+            for (String type : types) {
+                returnList.addAll(service.getPointsOfInterestList(type));
+            }
+            return returnList;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    // Test to expose location to Fragment
+    @Override
+    public Location getLocation() {
+        if (isServiceBound) {
+            return service.getLocation();
+        }
+        return null;
+    }
+
+    // Testing broadcast
+    @Override
+    public void dataReady(List<POI> data) {
+        Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
+        //TODO Do stuff to update View with new items from list
+    }
+
+    // Testing broadcast
+    private void testAddListener() {
+        notificationReceiver.addListener(this);
+    }
+
+    @Override
+    public void addListener(PoiListener listener) {
+        notificationReceiver.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(PoiListener listener) {
+        notificationReceiver.removeListener(listener);
     }
 }
