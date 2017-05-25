@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Points of Interest</string>
+    <string name="title_activity_main">Points of Interest</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Indstillinger</string>
+
+    <string name="login_username">Brugernavn</string>
+    <string name="login_password">Password</string>
+    <string name="login_button">Log ind</string>
+
+    <string name="navbar_camera">Kamera</string>
+    <string name="navbar_settings">Indstillinger</string>
+    <string name="navbar_logout">Log ud</string>
+    <string name="navbar_exit">Afslut</string>
+    <string name="store">Butik</string>
+    <string name="gas_station">Tank Station</string>
+    <string name="library">Bibliotek</string>
+    <string name="cafe">Café</string>
+    <string name="gym">Træningscenter</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="meme_img_desc" />
+</resources>
