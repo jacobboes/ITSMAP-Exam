@@ -13,19 +13,36 @@ import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.util.LocationHelper;
 import com.grp16.itsmap.smapexam.util.NotificationReceiver;
 import com.grp16.itsmap.smapexam.util.PoiListener;
+import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class AROverlayView extends View  implements PoiListener{
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;
     private List<POI> arPoints;
+    private ServiceWrapper service;
+    Timer timer;
+    int Interval = 30;
+    int TimerInterval = 1000 * Interval;
 
-
-    public AROverlayView(Context context) {
+    public AROverlayView(Context context, final ServiceWrapper service) {
         super(context);
         NotificationReceiver.addListener(this);
+        this.service = service;
+        this.currentLocation = service.getLocation();
+        this.arPoints = service.getPoiList();
 
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                currentLocation = service.getLocation();
+                runInvalidate();
+            }
+        }, 0, TimerInterval);
     }
     @Override
     public void finalize() {
@@ -34,19 +51,17 @@ public class AROverlayView extends View  implements PoiListener{
 
     public void updateRotatedProjectionMatrix(float[] rotatedProjectionMatrix) {
         this.rotatedProjectionMatrix = rotatedProjectionMatrix;
-        this.invalidate();
+        runInvalidate();
     }
 
     @Override
-    public void dataReady(List<POI> data, Location location) {
+    public void dataReady(List<POI> data) {
         arPoints = data;
-
-        this.currentLocation = location;
-        this.invalidate();
+        this.currentLocation = service.getLocation();
+        runInvalidate();
     }
 
-    public void updateCurrentLocation(Location currentLocation){
-        this.currentLocation = currentLocation;
+    private void runInvalidate() {
         this.invalidate();
     }
 

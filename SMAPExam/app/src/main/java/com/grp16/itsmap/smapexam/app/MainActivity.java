@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // Testing broadcast
     @Override
-    public void dataReady(List<POI> data, Location location) {
+    public void dataReady(List<POI> data) {
         Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
         //TODO Do stuff to update View with new items from list
     }

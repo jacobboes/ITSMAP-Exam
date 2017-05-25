@@ -19,11 +19,12 @@ import android.widget.Toast;
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.app.AR.ARCamera;
 import com.grp16.itsmap.smapexam.app.AR.AROverlayView;
+import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 public class ARCameraFragment extends Fragment implements SensorEventListener{
-    private ARCameraInteraction activity;
+    private ServiceWrapper service;
     private AROverlayView arOverlayView;
     private Camera camera;
     private ARCamera arCamera;
@@ -55,7 +56,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         cameraContainerLayout = (FrameLayout) view.findViewById(R.id.camera_container_layout);
         surfaceView = (SurfaceView) view.findViewById(R.id.surface_view);
-        arOverlayView = new AROverlayView(context);
+        arOverlayView = new AROverlayView(context, service);
         return view;
     }
 
@@ -77,7 +78,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
         super.onAttach(context);
         if (context instanceof ARCameraInteraction) {
             this.context = context;
-            activity = (ARCameraInteraction) context;
+            service = (ServiceWrapper) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement ARCameraInteraction");
         }
@@ -87,7 +88,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     public void onDetach() {
         releaseCamera();
         super.onDetach();
-        activity = null;
+        service = null;
     }
 
     public void initAROverlayView() {
