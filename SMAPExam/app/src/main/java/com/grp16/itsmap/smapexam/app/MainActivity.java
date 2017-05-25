@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startService(new Intent(this, LocationService.class));
 
         initializeViews();
-        startARCamera(true);
+        //startARCamera(true);
         setupNotificationReceiver();
         authentication = new Authentication();
         database = Database.getInstance();
@@ -92,8 +92,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, LocationService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        if (!isServiceBound) {
+            Intent intent = new Intent(this, LocationService.class);
+            bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        }
         requestLocationPermission();
         requestCameraPermission();
     }
@@ -158,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 LocationService.NotificationBinder binder = (LocationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
+                startARCamera(true);
             }
 
             @Override

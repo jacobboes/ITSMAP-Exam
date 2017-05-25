@@ -62,6 +62,7 @@ public class LocationService extends Service {
         }
     }
 
+
     private Location checkIfLocationAvailable() {
         try {
             if (locationManager != null) {
@@ -147,5 +148,9 @@ public class LocationService extends Service {
         return pointsOfInterestList;
     }
 
-
+    private void startupBroadcast() {
+        Intent broadcastPOI = new Intent();
+        broadcastPOI.setAction(AppUtil.BROADCAST_LOCATION_CHANGED);
+        sendBroadcast(broadcastPOI);
+    }
 }
