@@ -143,7 +143,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     private void registerSensors() {
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_FASTEST);
+                SensorManager.SENSOR_DELAY_UI);
     }
 
     @Override
