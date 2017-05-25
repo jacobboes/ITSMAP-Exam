@@ -83,8 +83,8 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
 
     @Override
     public void onDetach() {
-        releaseCamera();
         super.onDetach();
+        releaseCamera();
         activity = null;
     }
 
@@ -132,9 +132,9 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
 
     private void releaseCamera() {
         if(camera != null) {
-            camera.setPreviewCallback(null);
+            //camera.setPreviewCallback(null);
             camera.stopPreview();
-            arCamera.setCamera(null);
+            //arCamera.setCamera(null);
             camera.release();
             camera = null;
         }

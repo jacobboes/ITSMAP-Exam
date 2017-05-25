@@ -1,5 +1,6 @@
 package com.grp16.itsmap.smapexam.app;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, SelectTypesInteraction, PoiListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, PoiListener {
     private Authentication authentication;
     private Database database;
 
