@@ -26,7 +26,7 @@ import com.grp16.itsmap.smapexam.service.NotificationService;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TestServiceInteraction, SelectTypesInteraction {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, TestServiceInteraction {
     private Authentication authentication;
     private Database database;
 
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void startSettings() {
-        Fragment fragment = SelectTypesFragment.newInstance();
+        Fragment fragment = SelectTypesFragment.newInstance(database);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
