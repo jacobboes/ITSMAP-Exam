@@ -101,7 +101,7 @@ public class Database {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     UserCustomInfo tmp = messageSnapshot.getValue(UserCustomInfo.class);
-                    if (tmp.uid == auth.getCurrentUser().getUid().toString()) {
+                    if (tmp.uid.equals(auth.getCurrentUser().getUid().toString())) {
                         user = tmp;
                         return;
                     }
