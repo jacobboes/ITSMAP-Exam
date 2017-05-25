@@ -19,12 +19,11 @@ import android.widget.Toast;
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.app.AR.ARCamera;
 import com.grp16.itsmap.smapexam.app.AR.AROverlayView;
-import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import static android.content.Context.SENSOR_SERVICE;
 
 public class ARCameraFragment extends Fragment implements SensorEventListener{
-    private ServiceWrapper service;
+    private ARCameraInteraction activity;
     private AROverlayView arOverlayView;
     private Camera camera;
     private ARCamera arCamera;
@@ -49,14 +48,12 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //return inflater.inflate(R.layout.fragment_arcamera, container, false);
-
         View view = inflater.inflate(R.layout.fragment_arcamera, null);
 
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
         cameraContainerLayout = (FrameLayout) view.findViewById(R.id.camera_container_layout);
         surfaceView = (SurfaceView) view.findViewById(R.id.surface_view);
-        arOverlayView = new AROverlayView(context, service);
+        arOverlayView = new AROverlayView(context, activity);
         return view;
     }
 
@@ -76,9 +73,9 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         if (context instanceof ARCameraInteraction) {
-            this.context = context;
-            service = (ServiceWrapper) context;
+            activity = (ARCameraInteraction) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement ARCameraInteraction");
         }
@@ -88,7 +85,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     public void onDetach() {
         releaseCamera();
         super.onDetach();
-        service = null;
+        activity = null;
     }
 
     public void initAROverlayView() {

@@ -9,44 +9,42 @@ import android.location.Location;
 import android.opengl.Matrix;
 import android.view.View;
 
+import com.grp16.itsmap.smapexam.app.ARCameraInteraction;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.util.LocationHelper;
-import com.grp16.itsmap.smapexam.util.NotificationReceiver;
 import com.grp16.itsmap.smapexam.util.PoiListener;
-import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class AROverlayView extends View  implements PoiListener{
+public class AROverlayView extends View implements PoiListener{
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;
     private List<POI> arPoints;
-    private ServiceWrapper service;
+    private ARCameraInteraction arCameraInteraction;
     Timer timer;
     int Interval = 30;
     int TimerInterval = 1000 * Interval;
 
-    public AROverlayView(Context context, final ServiceWrapper service) {
+    public AROverlayView(Context context, ARCameraInteraction arCameraInteraction) {
         super(context);
-        NotificationReceiver.addListener(this);
-        this.service = service;
-        this.currentLocation = service.getLocation();
-        this.arPoints = service.getPoiList();
+        this.arCameraInteraction = arCameraInteraction;
+        this.currentLocation = arCameraInteraction.getLocation();
+        this.arPoints = arCameraInteraction.getPoiList();
+        this.arCameraInteraction.addListener(this);
 
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                currentLocation = service.getLocation();
-                runInvalidate();
+                runTimer();
             }
         }, 0, TimerInterval);
     }
     @Override
     public void finalize() {
-        NotificationReceiver.removeListener(this);
+        arCameraInteraction.removeListener(this);
     }
 
     public void updateRotatedProjectionMatrix(float[] rotatedProjectionMatrix) {
@@ -57,12 +55,17 @@ public class AROverlayView extends View  implements PoiListener{
     @Override
     public void dataReady(List<POI> data) {
         arPoints = data;
-        this.currentLocation = service.getLocation();
+        this.currentLocation = arCameraInteraction.getLocation();
         runInvalidate();
     }
 
     private void runInvalidate() {
         this.invalidate();
+    }
+
+    private void runTimer() {
+        currentLocation = arCameraInteraction.getLocation();
+        runInvalidate();
     }
 
     @Override

@@ -33,13 +33,12 @@ import com.grp16.itsmap.smapexam.service.LocationService;
 import com.grp16.itsmap.smapexam.util.AppUtil;
 import com.grp16.itsmap.smapexam.util.NotificationReceiver;
 import com.grp16.itsmap.smapexam.util.PoiListener;
-import com.grp16.itsmap.smapexam.util.ServiceWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, SelectTypesInteraction, ServiceWrapper, PoiListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, SelectTypesInteraction, PoiListener {
     private Authentication authentication;
     private Database database;
 
@@ -194,8 +193,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public List<POI> getPoiList() {
         if (isServiceBound) {
-            //TODO Update hardcoded type
-            return service.getPointsOfInterestList("restaurant");
+            List<String> types = database.getUserSelectedTypes();
+            List<POI> returnList = new ArrayList<>();
+            for (String type : types) {
+                returnList.addAll(service.getPointsOfInterestList(type));
+            }
+            return returnList;
         } else {
             return Collections.emptyList();
         }
@@ -220,5 +223,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Testing broadcast
     private void testAddListener() {
         notificationReceiver.addListener(this);
+    }
+
+    @Override
+    public void addListener(PoiListener listener) {
+        notificationReceiver.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(PoiListener listener) {
+        notificationReceiver.removeListener(listener);
     }
 }
