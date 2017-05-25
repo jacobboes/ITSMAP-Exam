@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -26,7 +27,6 @@ import android.widget.Toast;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
-import android.location.Location;
 import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
 import com.grp16.itsmap.smapexam.service.LocationService;
@@ -39,10 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SelectTypesInteraction,
-        ServiceWrapper, PoiListener {
-
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, SelectTypesInteraction, ServiceWrapper, PoiListener {
     private Authentication authentication;
     private Database database;
 
@@ -98,8 +95,8 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         Intent intent = new Intent(this, LocationService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        requestCameraPermission();
         requestLocationPermission();
+        requestCameraPermission();
     }
 
     @Override
@@ -135,7 +132,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startARCamera(boolean isStartUp) {
-        Fragment fragment = TestServiceFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
+        Fragment fragment = ARCameraFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (isStartUp) {
             transaction.add(R.id.main_fragment_container, fragment);
@@ -215,7 +212,7 @@ public class MainActivity extends AppCompatActivity
 
     // Testing broadcast
     @Override
-    public void dataReady(List<POI> data) {
+    public void dataReady(List<POI> data, Location location) {
         Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
         //TODO Do stuff to update View with new items from list
     }

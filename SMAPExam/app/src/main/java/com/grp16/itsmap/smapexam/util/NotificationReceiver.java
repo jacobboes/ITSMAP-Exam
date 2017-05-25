@@ -4,14 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.grp16.itsmap.smapexam.model.google.places.Location;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    public List<PoiListener> listeners;
+    public static List<PoiListener> listeners;
     private ServiceWrapper service;
 
     public NotificationReceiver(ServiceWrapper service) {
@@ -23,16 +21,16 @@ public class NotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(AppUtil.BROADCAST_LOCATION_CHANGED)) {
             for (PoiListener listener : listeners) {
-                listener.dataReady(service.getPoiList());
+                listener.dataReady(service.getPoiList(), service.getLocation());
             }
         }
     }
 
-    public void addListener(PoiListener listener) {
+    public static void addListener(PoiListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener (PoiListener listener) {
+    public static void removeListener (PoiListener listener) {
         listeners.remove(listener);
     }
 }

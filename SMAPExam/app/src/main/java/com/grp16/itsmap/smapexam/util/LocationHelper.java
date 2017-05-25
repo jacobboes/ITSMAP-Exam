@@ -10,9 +10,9 @@ public class LocationHelper {
     private final static double WGS84_A = 6378137.0;                  // WGS 84 semi-major axis constant in meters
     private final static double WGS84_E2 = 0.00669437999014;          // square of WGS 84 eccentricity
 
-    public static float[] WSG84toECEF(Location location) {
-        double radLat = Math.toRadians(location.getLatitude());
-        double radLon = Math.toRadians(location.getLongitude());
+    public static float[] WSG84toECEF(double latitude, double longitude, double altitude) {
+        double radLat = Math.toRadians(latitude);
+        double radLon = Math.toRadians(longitude);
 
         float clat = (float) Math.cos(radLat);
         float slat = (float) Math.sin(radLat);
@@ -21,9 +21,9 @@ public class LocationHelper {
 
         float N = (float) (WGS84_A / Math.sqrt(1.0 - WGS84_E2 * slat * slat));
 
-        float x = (float) ((N + location.getAltitude()) * clat * clon);
-        float y = (float) ((N + location.getAltitude()) * clat * slon);
-        float z = (float) ((N * (1.0 - WGS84_E2) + location.getAltitude()) * slat);
+        float x = (float) ((N + altitude) * clat * clon);
+        float y = (float) ((N + altitude) * clat * slon);
+        float z = (float) ((N * (1.0 - WGS84_E2) + altitude) * slat);
 
         return new float[] {x , y, z};
     }
