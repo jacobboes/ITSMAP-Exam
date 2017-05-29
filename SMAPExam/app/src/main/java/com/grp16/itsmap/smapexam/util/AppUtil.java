@@ -2,7 +2,7 @@ package com.grp16.itsmap.smapexam.util;
 
 import android.graphics.Color;
 
-import java.util.HashMap;
+import com.grp16.itsmap.smapexam.R;
 
 public class AppUtil {
     public static final int MY_RADIUS = 500;
@@ -15,15 +15,36 @@ public class AppUtil {
     public static final String GOOGLE_MAPS_KEY = "AIzaSyCUEm_dhSGGrtpcBh44tCJpbAAQCzYyszI";
     public static final String GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/elevation/json/";
 
-    public static HashMap<String, Integer> getPoiColorMapping(){
-        HashMap<String, Integer> poiColorMapping= new HashMap<>();
-        poiColorMapping.put("cafe", Color.BLACK);
-        poiColorMapping.put("restaurant", Color.GREEN);
-        poiColorMapping.put("gym", Color.BLUE);
-        poiColorMapping.put("library", Color.YELLOW);
-        poiColorMapping.put("gas_station", Color.CYAN);
-        poiColorMapping.put("store", Color.RED);
-        poiColorMapping.put("other", Color.DKGRAY);
-        return poiColorMapping;
+    public enum poiTypeMapping
+    {
+        cafe(R.string.cafe, Color.BLACK, "cafe"),
+        restaurant(R.string.restaurant, Color.GREEN, "restaurant"),
+        gym(R.string.gym, Color.BLUE, "gym"),
+        library(R.string.library, Color.YELLOW, "library"),
+        gas_station(R.string.gas_station, Color.CYAN, "gas_station"),
+        store(R.string.store, Color.RED, "store");
+
+        private int res;
+        private int color;
+        private String val;
+
+        poiTypeMapping(int res, int color, String val){
+
+            this.res = res;
+            this.color = color;
+            this.val = val;
+        }
+
+        public int getRes() {
+            return res;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public String getVal() {
+            return val;
+        }
     }
 }

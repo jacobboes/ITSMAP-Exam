@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.network.Database;
+import com.grp16.itsmap.smapexam.util.AppUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +54,19 @@ public class SelectTypesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_select_types, container, false);
-        types.add(new Type((CheckBox) view.findViewById(R.id.cafe), "cafe"));
-        types.add(new Type((CheckBox) view.findViewById(R.id.restaurant), "restaurant"));
-        types.add(new Type((CheckBox) view.findViewById(R.id.gym), "gym"));
-        types.add(new Type((CheckBox) view.findViewById(R.id.library), "library"));
-        types.add(new Type((CheckBox) view.findViewById(R.id.gasStation), "gas_station"));
-        types.add(new Type((CheckBox) view.findViewById(R.id.store), "store"));
+        LinearLayout typeList = (LinearLayout) view.findViewById(R.id.linearLayout);
 
+        for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
+            CheckBox checkBox = new CheckBox(inflater.getContext());
+            checkBox.setText(typeMapping.getRes());
+
+            LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(10,10,10,0);
+            checkBox.setLayoutParams(params);
+
+            typeList.addView(checkBox);
+            types.add(new Type(checkBox, typeMapping.getVal()));
+        }
         return view;
     }
 }
