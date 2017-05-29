@@ -1,6 +1,7 @@
 package com.grp16.itsmap.smapexam.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserCustomInfo {
@@ -9,7 +10,8 @@ public class UserCustomInfo {
     public List<POI> myPoi;
 
     public UserCustomInfo(){
-
+        poiType = new ArrayList<>();
+        myPoi = new ArrayList<>();
     }
 
     public UserCustomInfo(String uid, List<String> poiType, List<POI> myPoi){

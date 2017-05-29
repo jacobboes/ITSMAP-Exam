@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.view.Surface;
 import android.view.View;
 
 import com.grp16.itsmap.smapexam.app.ARCameraInteraction;
@@ -43,6 +44,7 @@ public class AROverlayView extends View implements PoiListener{
         this.currentLocation = arCameraInteraction.getLocation();
         this.arPoints = arCameraInteraction.getPoiList();
         this.arCameraInteraction.addListener(this);
+
 
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -115,12 +117,40 @@ public class AROverlayView extends View implements PoiListener{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        int degrees = 0;
+        switch (arCameraInteraction.getOrientation()) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 0; //180
+                break;
+            case Surface.ROTATION_270:
+                degrees = 180; //270
+                break;
+        }
+
+        canvas.save();
+        canvas.rotate(degrees, width/2, height/2);
+
+
+
         for (DrawObj obj : threadResults){
-            //TODO enum whit type string and color
-            paint.setColor(AppUtil.getPoiColorMapping().get(obj.type.get(0)));
+            if (AppUtil.getPoiColorMapping().containsKey(obj.type.get(0))) {
+                paint.setColor(AppUtil.getPoiColorMapping().get(obj.type.get(0)));
+            }else {
+                paint.setColor(AppUtil.getPoiColorMapping().get("other"));
+            }
             canvas.drawCircle(obj.x, obj.y, radius, paint);
             canvas.drawText(obj.name, obj.x - (30 * obj.name.length() / 2), obj.y - 80, paint);
         }
+        canvas.restore();
+
+
 
     }
 

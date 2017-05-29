@@ -23,6 +23,7 @@ public class AppUtil {
         poiColorMapping.put("library", Color.YELLOW);
         poiColorMapping.put("gas_station", Color.CYAN);
         poiColorMapping.put("store", Color.RED);
+        poiColorMapping.put("other", Color.DKGRAY);
         return poiColorMapping;
     }
 }

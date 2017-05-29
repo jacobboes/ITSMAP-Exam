@@ -180,11 +180,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setupNotificationReceiver() {
-        notificationReceiver = new NotificationReceiver(this);
-        registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
+        if (notificationReceiver == null){
+            notificationReceiver = new NotificationReceiver(this);
+            registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
+        }
+
 
         // Testing broadcast listeners
-        testAddListener();
+        //testAddListener();
     }
 
     // Exposes List from Service to other activities
@@ -231,5 +234,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void removeListener(PoiListener listener) {
         notificationReceiver.removeListener(listener);
+    }
+
+    @Override
+    public int getOrientation() {
+        return getWindowManager().getDefaultDisplay().getRotation();
     }
 }
