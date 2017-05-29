@@ -3,6 +3,7 @@ package com.grp16.itsmap.smapexam.app.AR;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -120,10 +121,12 @@ public class AROverlayView extends View implements PoiListener{
         canvas.rotate(getOrientation(), width/2, height/2);
 
         for (DrawObj obj : threadResults){
-            if (AppUtil.getPoiColorMapping().containsKey(obj.type.get(0))) {
-                paint.setColor(AppUtil.getPoiColorMapping().get(obj.type.get(0)));
-            }else {
-                paint.setColor(AppUtil.getPoiColorMapping().get("other"));
+            AppUtil.poiTypeMapping.valueOf(obj.type.get(0));
+
+            paint.setColor(Color.DKGRAY);
+            for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
+                if(typeMapping.getVal() == obj.type.get(0))
+                    paint.setColor(typeMapping.getColor());
             }
 
             canvas.drawCircle(obj.x, obj.y, radius, paint);
