@@ -3,7 +3,6 @@ package com.grp16.itsmap.smapexam.app.AR;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -13,6 +12,7 @@ import android.view.View;
 
 import com.grp16.itsmap.smapexam.app.ARCameraInteraction;
 import com.grp16.itsmap.smapexam.model.POI;
+import com.grp16.itsmap.smapexam.util.AppUtil;
 import com.grp16.itsmap.smapexam.util.LocationHelper;
 import com.grp16.itsmap.smapexam.util.PoiListener;
 
@@ -71,7 +71,7 @@ public class AROverlayView extends View implements PoiListener{
     public void dataReady(List<POI> data) {
         arPoints = data;
         this.currentLocation = arCameraInteraction.getLocation();
-        runInvalidate();
+        //runInvalidate();
     }
 
     private void runInvalidate() {
@@ -94,10 +94,9 @@ public class AROverlayView extends View implements PoiListener{
         final int radius = 30;
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
+
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
         paint.setTextSize(60);
 
@@ -118,7 +117,7 @@ public class AROverlayView extends View implements PoiListener{
         }
         for (DrawObj obj : threadResults){
             //TODO enum whit type string and color
-
+            paint.setColor(AppUtil.getPoiColorMapping().get(obj.type.get(0)));
             canvas.drawCircle(obj.x, obj.y, radius, paint);
             canvas.drawText(obj.name, obj.x - (30 * obj.name.length() / 2), obj.y - 80, paint);
         }
