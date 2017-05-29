@@ -73,7 +73,6 @@ public class AROverlayView extends View implements PoiListener{
     public void dataReady(List<POI> data) {
         arPoints = data;
         this.currentLocation = arCameraInteraction.getLocation();
-        //runInvalidate();
     }
 
     private void runInvalidate() {
@@ -102,7 +101,6 @@ public class AROverlayView extends View implements PoiListener{
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
         paint.setTextSize(60);
 
-
         ReentrantLock lock = new ReentrantLock();
         threadResults = new ArrayList<>();
         ExecutorService executor = Executors.newCachedThreadPool();
@@ -118,26 +116,8 @@ public class AROverlayView extends View implements PoiListener{
             e.printStackTrace();
         }
 
-        int degrees = 0;
-        switch (arCameraInteraction.getOrientation()) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 0; //180
-                break;
-            case Surface.ROTATION_270:
-                degrees = 180; //270
-                break;
-        }
-
         canvas.save();
-        canvas.rotate(degrees, width/2, height/2);
-
-
+        canvas.rotate(getOrientation(), width/2, height/2);
 
         for (DrawObj obj : threadResults){
             if (AppUtil.getPoiColorMapping().containsKey(obj.type.get(0))) {
@@ -145,13 +125,31 @@ public class AROverlayView extends View implements PoiListener{
             }else {
                 paint.setColor(AppUtil.getPoiColorMapping().get("other"));
             }
+
             canvas.drawCircle(obj.x, obj.y, radius, paint);
             canvas.drawText(obj.name, obj.x - (30 * obj.name.length() / 2), obj.y - 80, paint);
         }
         canvas.restore();
+    }
 
 
-
+    private int getOrientation(){
+        int degrees = 0;
+        switch (arCameraInteraction.getOrientation()) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = -90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 0; //180
+                break;
+            case Surface.ROTATION_270:
+                degrees = 90; //270
+                break;
+        }
+        return degrees;
     }
 
     public class WorkerThread implements Runnable {
@@ -185,6 +183,7 @@ public class AROverlayView extends View implements PoiListener{
                 DrawObj drawObj = new DrawObj();
                 drawObj.x = (0.5f + cameraCoordinateVector[0] / cameraCoordinateVector[3]) * width;
                 drawObj.y = (0.5f - cameraCoordinateVector[1] / cameraCoordinateVector[3]) * height;
+
                 drawObj.name = poi.name;
                 drawObj.type = poi.type;
 
