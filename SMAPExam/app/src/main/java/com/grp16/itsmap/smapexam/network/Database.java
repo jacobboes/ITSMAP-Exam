@@ -17,17 +17,13 @@ import com.grp16.itsmap.smapexam.util.AppUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Database {
 
-    private DatabaseReference poiDatabase;
     private DatabaseReference userDatabase;
     private FirebaseAuth auth;
     private Context context;
-    private final String POI_COLLECTION_NAME = "POI";
     private final String USER_COLLECTION_NAME = "User";
-    private List<POI> poiList = new ArrayList();
     private UserCustomInfo user = new UserCustomInfo();
 
     private static final Database ourInstance = new Database();
@@ -39,7 +35,6 @@ public class Database {
     private Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
-        poiDatabase = database.getReference(POI_COLLECTION_NAME);
         auth = FirebaseAuth.getInstance();
         userDatabase = database.getReference(USER_COLLECTION_NAME);
         listener();
@@ -48,32 +43,32 @@ public class Database {
     public void setContext(Context context){
         this.context = context;
     }
+
     public void insertUpdate(POI data) {
-        if (data.uid == null) {
-            poiDatabase.child(UUID.randomUUID().toString()).setValue(data);
-        } else {
-            poiDatabase.child(data.uid).setValue(data);
+        if (user.myPoi.contains(data)) {
+            user.myPoi.remove(data);
         }
+        user.myPoi.add(data);
+        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
     }
 
     public void insertUpdate(List<String> types) {
-        UserCustomInfo tmp = new UserCustomInfo();
-        tmp.uid=auth.getCurrentUser().getUid().toString();
-        tmp.poiType = types;
-        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(tmp);
+        user.poiType = types;
+        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
     }
 
     public void delete(POI data) {
-        poiDatabase.child(data.uid).removeValue();
+        user.myPoi.remove(data);
+        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
     }
 
     public List<POI> getPOI() {
-        return poiList;
+        return user.myPoi;
     }
 
     public List<POI> getPOI(LocationParam data) {
         List<POI> returnVal = new ArrayList();
-        for (POI singlePoi : poiList) {
+        for (POI singlePoi : user.myPoi) {
             if (singlePoi.type.contains(data.getType()) && withinRadius(data, singlePoi)) {
                 returnVal.add(singlePoi);
             }
@@ -86,23 +81,6 @@ public class Database {
     }
 
     private void listener() {
-        ValueEventListener poiPostListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<POI> returnval = new ArrayList();
-                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
-                    returnval.add(messageSnapshot.getValue(POI.class));
-                }
-                poiList = returnval;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("Database", "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        poiDatabase.addValueEventListener(poiPostListener);
-
         ValueEventListener userPostListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
