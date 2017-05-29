@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startService(new Intent(this, LocationService.class));
 
         initializeViews();
-        //startARCamera(true);
         setupNotificationReceiver();
         authentication = new Authentication();
         database = Database.getInstance();
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            startARCamera(false);
+            startARCamera();
         } else if (id == R.id.nav_settings) {
             startSettings();
         } else if (id == R.id.nav_logout) {
@@ -132,14 +131,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void startARCamera(boolean isStartUp) {
+    private void startARCamera() {
         Fragment fragment = ARCameraFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (isStartUp) {
-            transaction.add(R.id.main_fragment_container, fragment);
-        } else {
-            transaction.replace(R.id.main_fragment_container, fragment);
-        }
+        transaction.replace(R.id.main_fragment_container, fragment);
         transaction.commit();
     }
 
@@ -160,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 LocationService.NotificationBinder binder = (LocationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
-                startARCamera(true);
+                startARCamera();
             }
 
             @Override
