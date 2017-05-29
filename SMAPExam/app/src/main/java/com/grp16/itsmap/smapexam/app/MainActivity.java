@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -21,8 +22,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.grp16.itsmap.smapexam.R;
@@ -38,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ARCameraInteraction, PoiListener {
+public class MainActivity extends AppCompatActivity implements ARCameraInteraction, PoiListener {
     private Authentication authentication;
     private Database database;
 
@@ -47,8 +53,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private LocationService service;
     private NotificationReceiver notificationReceiver;
 
-    private ListView testList;
-    private ArrayAdapter<String> adapter;
+    private ListView poiListView;
+    private ArrayAdapter adapter;
+    private List<POI> poiList;
     private List<String> places = new ArrayList<>();
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
@@ -60,8 +67,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         startService(new Intent(this, LocationService.class));
 
-        initializeViews();
+        poiList = new ArrayList<>();
         setupNotificationReceiver();
+        initializeViews();
         authentication = new Authentication();
         database = Database.getInstance();
     }
@@ -69,15 +77,108 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initializeViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupPoiListView();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+        notificationReceiver.addListener(new PoiListener() {
+            @Override
+            public void dataReady(List<POI> data) {
+                refreshPoiList();
+            }
+        });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        setupLeftNavigationView();
+        setupRightNavigationView();
+    }
+
+    private void refreshPoiList() {
+        poiList.clear();
+        poiList.addAll(getPoiList());
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setupPoiListView() {
+        poiListView = (ListView) findViewById(R.id.poi_list_view);
+        adapter = new ArrayAdapter<POI>(this, android.R.layout.simple_list_item_2, android.R.id.text1, poiList) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+                text1.setText(poiList.get(position).name);
+                text2.setText(poiList.get(position).vicinity);
+
+                return view;
+            }
+        };
+        poiListView.setAdapter(adapter);
+        poiListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final POI poi = poiList.get(position);
+                Intent intent = new Intent();
+                intent.putExtra("id", poi.uid);
+                intent.putExtra("latitude", poi.latitude);
+                intent.putExtra("longitude", poi.longitude);
+                intent.putExtra("altitude", poi.altitude);
+                intent.putExtra("name", poi.name);
+                intent.putExtra("vicinity", poi.vicinity);
+                intent.putStringArrayListExtra("type", new ArrayList<String>(poi.type));
+
+                startActivity(intent, DetailsActivity.class);
+            }
+        });
+    }
+
+    private void setupLeftNavigationView() {
+        NavigationView leftNavigationView = (NavigationView) findViewById(R.id.left_nav_view);
+        leftNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_camera) {
+                    startARCamera();
+                } else if (id == R.id.nav_settings) {
+                    startSettings();
+                } else if (id == R.id.nav_logout) {
+                    logout();
+                } else if (id == R.id.nav_exit) {
+                    finish();
+                }
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+    }
+
+    private void setupRightNavigationView() {
+        NavigationView rightNavigationView = (NavigationView) findViewById(R.id.right_nav_view);
+        rightNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                //TODO Do stuff in the right fragment
+
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.END);
+                return true;
+            }
+        });
+    }
+
+    private void logout() {
+        authentication.logOut();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     @Override
@@ -104,35 +205,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
         } else {
             super.onBackPressed();
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            startARCamera();
-        } else if (id == R.id.nav_settings) {
-            startSettings();
-        } else if (id == R.id.nav_logout) {
-            authentication.logOut();
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        } else if (id == R.id.nav_exit) {
-            finish();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
     private void startARCamera() {
-        Fragment fragment = ARCameraFragment.newInstance();
+        Fragment fragment = ARCameraFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.commit();
@@ -155,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 LocationService.NotificationBinder binder = (LocationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
+                refreshPoiList();
                 startARCamera();
             }
 
