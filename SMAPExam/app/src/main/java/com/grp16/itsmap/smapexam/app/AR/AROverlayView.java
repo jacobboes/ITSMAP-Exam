@@ -121,11 +121,9 @@ public class AROverlayView extends View implements PoiListener{
         canvas.rotate(getOrientation(), width/2, height/2);
 
         for (DrawObj obj : threadResults){
-            AppUtil.poiTypeMapping.valueOf(obj.type.get(0));
-
             paint.setColor(Color.DKGRAY);
             for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
-                if(typeMapping.getVal() == obj.type.get(0))
+                if(typeMapping.getVal().equals(obj.type.get(0)))
                     paint.setColor(typeMapping.getColor());
             }
 
