@@ -123,8 +123,10 @@ public class AROverlayView extends View implements PoiListener{
         for (DrawObj obj : threadResults){
             paint.setColor(Color.DKGRAY);
             for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
-                if(typeMapping.getVal().equals(obj.type.get(0)))
-                    paint.setColor(typeMapping.getColor());
+                for (String s : obj.type) {
+                    if(typeMapping.getVal().equals(s))
+                        paint.setColor(typeMapping.getColor());
+                }
             }
 
             canvas.drawCircle(obj.x, obj.y, radius, paint);
