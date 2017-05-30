@@ -46,26 +46,20 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ARCameraInteraction {
     private Authentication authentication;
     private Database database;
-
     private boolean isServiceBound;
     private ServiceConnection connection = getServiceConnection();
     private LocationService service;
     private NotificationReceiver notificationReceiver;
     private ListView poiListView;
     private ArrayAdapter adapter;
-    private List<POI> poiList;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-
+    private List<POI> poiList  = new ArrayList<>();
     private FloatingActionButton createPoiFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         startService(new Intent(this, LocationService.class));
-
-        poiList = new ArrayList<>();
         setupNotificationReceiver();
         initializeViews();
         authentication = new Authentication();
@@ -232,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.commit();
-
     }
 
     private void startSettings() {
@@ -274,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
-            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA}, 1);
         }
     }
 
