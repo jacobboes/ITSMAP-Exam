@@ -41,12 +41,6 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_arcamera, null);
 
@@ -55,11 +49,6 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
         surfaceView = (SurfaceView) view.findViewById(R.id.surface_view);
         arOverlayView = new AROverlayView(context, activity);
         return view;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -93,14 +82,14 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
         activity = null;
     }
 
-    public void initAROverlayView() {
+    private void initAROverlayView() {
         if (arOverlayView.getParent() != null) {
             ((ViewGroup) arOverlayView.getParent()).removeView(arOverlayView);
         }
         cameraContainerLayout.addView(arOverlayView);
     }
 
-    public void initARCameraView() {
+    private void initARCameraView() {
         reloadSurfaceView();
 
         if (arCamera == null) {
@@ -148,7 +137,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     private void registerSensors() {
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_UI);
+                SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override

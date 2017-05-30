@@ -15,13 +15,7 @@ import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 
 public class DetailsFragment extends Fragment {
-
     private static POI poi;
-    private TextView displayName;
-    private TextView displayVicinity;
-    private TextView displayTypes;
-    private Button btnGoogleMaps;
-
 
     public static DetailsFragment newInstance(POI poi) {
         DetailsFragment.poi = poi;
@@ -33,9 +27,9 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_details, container, false);
 
-        displayName = (TextView) view.findViewById(R.id.display_name);
-        displayVicinity = (TextView) view.findViewById(R.id.display_vicinity);
-        displayTypes = (TextView) view.findViewById(R.id.display_types);
+        TextView displayName = (TextView) view.findViewById(R.id.display_name);
+        TextView displayVicinity = (TextView) view.findViewById(R.id.display_vicinity);
+        TextView displayTypes = (TextView) view.findViewById(R.id.display_types);
 
         displayName.setText(poi.name);
         displayVicinity.setText(poi.vicinity);
@@ -44,7 +38,7 @@ public class DetailsFragment extends Fragment {
             displayTypes.append(", ");
         }
 
-        btnGoogleMaps = (Button) view.findViewById(R.id.btn_gmm);
+        Button btnGoogleMaps = (Button) view.findViewById(R.id.btn_gmm);
         btnGoogleMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +49,8 @@ public class DetailsFragment extends Fragment {
     }
 
     private void launchGoogleMaps() {
-        Uri uri = Uri.parse("geo:" + poi.latitude + "," + poi.longitude + "?q=" + poi.vicinity);
+        //Uri uri = Uri.parse("geo:" + poi.latitude + "," + poi.longitude + "?q=" + poi.vicinity);
+        Uri uri = Uri.parse("geo:" + poi.latitude + "," + poi.longitude);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);

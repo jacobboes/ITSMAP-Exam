@@ -51,10 +51,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private ServiceConnection connection = getServiceConnection();
     private LocationService service;
     private NotificationReceiver notificationReceiver;
-    private ListView poiListView;
     private ArrayAdapter adapter;
     private List<POI> poiList  = new ArrayList<>();
-    private FloatingActionButton createPoiFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                 refreshPoiList();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(notificationReceiver);
+        super.onDestroy();
     }
 
     private void initializeViews() {
@@ -101,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     }
 
     private void setupPoiListView() {
-        poiListView = (ListView) findViewById(R.id.poi_list_view);
+        ListView poiListView = (ListView) findViewById(R.id.poi_list_view);
         adapter = new ArrayAdapter<POI>(this, android.R.layout.simple_list_item_2, android.R.id.text1, poiList) {
             @NonNull
             @Override
@@ -168,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     }
 
     private void setupCreatePoiBtn() {
-        createPoiFab = (FloatingActionButton) findViewById(R.id.createPoi_fab);
+        FloatingActionButton createPoiFab = (FloatingActionButton) findViewById(R.id.createPoi_fab);
         createPoiFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         super.onStop();
         if (isServiceBound) {
             unbindService(connection);
+            isServiceBound = false;
         }
     }
 
@@ -264,10 +269,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     }
 
     private void setupNotificationReceiver() {
-        if (notificationReceiver == null) {
-            notificationReceiver = new NotificationReceiver(this);
-            registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
-        }
+        notificationReceiver = new NotificationReceiver(this);
+        registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
     }
 
     // Exposes List from Service to other activities

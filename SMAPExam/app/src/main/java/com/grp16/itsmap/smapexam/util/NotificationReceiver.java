@@ -9,7 +9,7 @@ import java.util.List;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    public List<PoiListener> listeners;
+    private List<PoiListener> listeners;
     private ServiceWrapper service;
 
     public NotificationReceiver(ServiceWrapper service) {

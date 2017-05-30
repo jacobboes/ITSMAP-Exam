@@ -36,7 +36,7 @@ public class Notification {
                 );
         mBuilder.setContentIntent(resultPendingIntent);
 
-        int mNotificationId = 001;
+        int mNotificationId = 1;
         NotificationManager mNotifyMgr = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.cancel(mNotificationId);
         mNotifyMgr.notify(mNotificationId, mBuilder.build());

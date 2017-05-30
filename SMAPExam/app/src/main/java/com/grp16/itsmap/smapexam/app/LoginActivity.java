@@ -24,7 +24,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
-    private Button loginBtn;
 
     private Authentication authentication;
 
@@ -48,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private void initializeViews() {
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
-        loginBtn = (Button) findViewById(R.id.loginBtn);
+        Button loginBtn = (Button) findViewById(R.id.loginBtn);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override

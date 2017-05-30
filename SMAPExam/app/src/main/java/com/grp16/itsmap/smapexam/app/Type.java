@@ -2,7 +2,7 @@ package com.grp16.itsmap.smapexam.app;
 
 import android.widget.CheckBox;
 
-public class Type {
+class Type {
     private final CheckBox checkBox;
     private final String type;
 

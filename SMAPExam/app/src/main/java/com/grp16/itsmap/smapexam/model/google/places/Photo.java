@@ -1,11 +1,12 @@
 
 package com.grp16.itsmap.smapexam.model.google.places;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Photo {
+import java.util.List;
+
+class Photo {
 
     @SerializedName("height")
     @Expose

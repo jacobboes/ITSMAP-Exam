@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> {
 
@@ -67,7 +66,8 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> 
 
             String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
+                buffer.append(line);
+                buffer.append("\n");
             }
 
             if (buffer.length() == 0) {
@@ -130,7 +130,8 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> 
 
             String line;
             while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
+                buffer.append(line);
+                buffer.append("\n");
             }
 
             if (buffer.length() == 0) {
@@ -164,7 +165,7 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> 
             for (POI poi : pointsOfInterest) {
                 if (result.location.lat == poi.latitude && result.location.lng == poi.longitude) {
                     poi.altitude = result.elevation;
-                    continue;
+                    break;
                 }
             }
         }
@@ -175,7 +176,11 @@ public class GoogleApiHandler extends AsyncTask<LocationParam, Void, List<POI>> 
         StringBuilder builder = new StringBuilder();
         int counter = 0;
         for (POI poi : list) {
-            builder.append(poi.latitude + "," + poi.longitude);
+            builder.append(poi.latitude);
+            builder.append(",");
+            builder.append(poi.longitude);
+
+
             if (++counter != list.size()) {
                 builder.append("|");
             }

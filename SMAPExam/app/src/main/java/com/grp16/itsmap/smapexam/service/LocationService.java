@@ -25,17 +25,16 @@ import java.util.concurrent.ExecutionException;
 public class LocationService extends Service {
 
     private final IBinder INotificationBinder = new NotificationBinder();
-    Database poiDatabase;
-    LocationParam locationParam;
-    Notification notification;
+    private Database poiDatabase;
+    private LocationParam locationParam;
+    private Notification notification;
     private Location location;
     private LocationManager locationManager;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // meters
-    private static final long MIN_TIME_BETWEEN_UPDATES = 1 * 60 * 1000; // 1 minute
+    private static final long MIN_TIME_BETWEEN_UPDATES = 60 * 1000; // 1 minute
     private List<POI> pointsOfInterestList;
 
-    boolean isGPSEnabled = false;
-    boolean canGetLocation = false;
+    private boolean isGPSEnabled = false;
 
 
     public LocationService() {
@@ -54,7 +53,6 @@ public class LocationService extends Service {
                 Toast.makeText(this, R.string.NoGPS, Toast.LENGTH_SHORT).show();
             } else {
                 if (locationManager != null) {
-                    canGetLocation = true;
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
                 }
             }

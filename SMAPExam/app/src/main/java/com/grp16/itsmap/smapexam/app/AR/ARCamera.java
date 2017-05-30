@@ -19,20 +19,16 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
-    private final String TAG = "ARCamera";
-
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
-    Camera.Size previewSize;
-    List<Camera.Size> supportedPreviewSizes;
-    Camera camera;
-    Camera.Parameters parameters;
-    Activity activity;
-
-    float[] projectionMatrix = new float[16];
-
-    int cameraWidth;
-    int cameraHeight;
+    private SurfaceView surfaceView;
+    private SurfaceHolder surfaceHolder;
+    private Camera.Size previewSize;
+    private List<Camera.Size> supportedPreviewSizes;
+    private Camera camera;
+    private Camera.Parameters parameters;
+    private Activity activity;
+    private float[] projectionMatrix = new float[16];
+    private int cameraWidth;
+    private int cameraHeight;
     private final static float Z_NEAR = 0.5f;
     private final static float Z_FAR = 2000;
 
@@ -114,7 +110,7 @@ public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
                 camera.setPreviewDisplay(holder);
             }
         } catch (IOException exception) {
-            Log.e(TAG, "IOException caused by setPreviewDisplay()", exception);
+            Log.e("ARCamera", "IOException caused by setPreviewDisplay()", exception);
         }
     }
 
@@ -169,7 +165,7 @@ public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
         Camera.Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
 
-        int targetHeight = height;
+
 
         for (Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
@@ -177,18 +173,18 @@ public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
                 continue;
             }
 
-            if (Math.abs(size.height - targetHeight) < minDiff) {
+            if (Math.abs(size.height - height) < minDiff) {
                 optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
+                minDiff = Math.abs(size.height - height);
             }
         }
 
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff) {
+                if (Math.abs(size.height - height) < minDiff) {
                     optimalSize = size;
-                    minDiff = Math.abs(size.height - targetHeight);
+                    minDiff = Math.abs(size.height - height);
                 }
             }
         }

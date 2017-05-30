@@ -33,7 +33,7 @@ public class Authentication {
                         if (task.isSuccessful() && auth.getCurrentUser() != null) {
                             callBack.onSuccess();
                         } else {
-                            callBack.onFailed(task.getException().getMessage().toString());
+                            callBack.onFailed(task.getException().getMessage());
                         }
                     }
                 });
@@ -41,21 +41,6 @@ public class Authentication {
 
     public void logOut() {
         auth.signOut();
-    }
-
-    public void createAccount(String username, String password, final AuthenticationCallBack callBack) {
-        auth.createUserWithEmailAndPassword(username, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful() && auth.getCurrentUser() != null) {
-                            callBack.onSuccess();
-
-                        } else {
-                            callBack.onFailed(task.getException().getMessage().toString());
-                        }
-                    }
-                });
     }
 
 }

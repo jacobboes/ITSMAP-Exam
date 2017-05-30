@@ -19,10 +19,10 @@ import java.util.UUID;
 public class Database {
 
     private DatabaseReference userDatabase;
-    private FirebaseAuth auth;
     private final String USER_COLLECTION_NAME = "User";
     private UserCustomInfo user = new UserCustomInfo();
     private List<DatabaseListener> listeners = new ArrayList<>();
+    private String userId;
 
     private static final Database ourInstance = new Database();
 
@@ -33,8 +33,9 @@ public class Database {
     private Database() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         userDatabase = database.getReference(USER_COLLECTION_NAME);
+        userId = auth.getCurrentUser().getUid();
         listener();
     }
 
@@ -44,12 +45,12 @@ public class Database {
             user.myPoi.remove(data);
         }
         user.myPoi.add(data);
-        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
+        userDatabase.child(userId).setValue(user);
     }
 
     public void insertUpdate(List<String> types) {
         user.poiType = types;
-        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
+        userDatabase.child(userId).setValue(user);
     }
 
     public void delete(POI data) {
@@ -59,7 +60,7 @@ public class Database {
                 break;
             }
         }
-        userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
+        userDatabase.child(userId).setValue(user);
     }
 
     public List<POI> getPOI() {
@@ -86,7 +87,7 @@ public class Database {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     UserCustomInfo tmp = messageSnapshot.getValue(UserCustomInfo.class);
-                    if (tmp.uid.equals(auth.getCurrentUser().getUid().toString())) {
+                    if (tmp.uid.equals(userId)) {
                         user = tmp;
                         notifyListeners();
                         return;
