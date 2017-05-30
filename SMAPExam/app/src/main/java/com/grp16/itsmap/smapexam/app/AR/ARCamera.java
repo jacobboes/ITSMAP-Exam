@@ -1,9 +1,11 @@
 package com.grp16.itsmap.smapexam.app.AR;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.opengl.Matrix;
+import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -14,8 +16,8 @@ import android.view.ViewGroup;
 import java.io.IOException;
 import java.util.List;
 
-//@SuppressWarnings("deprecation")
-//@TargetApi(Build.VERSION_CODES.KITKAT)
+@SuppressWarnings("deprecation")
+@TargetApi(Build.VERSION_CODES.KITKAT)
 public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
     private final String TAG = "ARCamera";
 

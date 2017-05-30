@@ -22,4 +22,8 @@
     <string name="gym">Træningscenter</string>
     <string name="restaurant">Restaurant</string>
     <string name="meme_img_desc" />
+    <string name="navbar_myPoi">Mine POI</string>
+    <string name="ConfirmDelete">Bekræft sletning</string>
+    <string name="Yes">Ja</string>
+    <string name="No">Nej</string>
 </resources>

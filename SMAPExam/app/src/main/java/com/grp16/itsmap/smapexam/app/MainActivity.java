@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private ServiceConnection connection = getServiceConnection();
     private LocationService service;
     private NotificationReceiver notificationReceiver;
-
     private ListView poiListView;
     private ArrayAdapter adapter;
     private List<POI> poiList;
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                 intent.putExtra("vicinity", poi.vicinity);
                 intent.putStringArrayListExtra("type", new ArrayList<String>(poi.type));
 
-                startActivity(intent, DetailsActivity.class);
+                //startActivity(intent, DetailsActivity.class);
             }
         });
     }
@@ -147,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                     startARCamera();
                 } else if (id == R.id.nav_settings) {
                     startSettings();
+                }else if (id == R.id.nav_myPoi) {
+                    startMyPoi();
                 } else if (id == R.id.nav_logout) {
                     logout();
                 } else if (id == R.id.nav_exit) {
@@ -208,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         } else if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            super.onBackPressed();
+            if (this.findViewById(R.id.activity_ar) == null)
+                startARCamera();
         }
     }
 
@@ -221,6 +222,14 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
 
     private void startSettings() {
         Fragment fragment = SelectTypesFragment.newInstance(database);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void startMyPoi() {
+        Fragment fragment = MyPoiFragment.newInstance(database);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
