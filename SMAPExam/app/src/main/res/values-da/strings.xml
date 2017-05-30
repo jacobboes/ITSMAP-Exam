@@ -24,11 +24,15 @@
     <string name="meme_img_desc" />
     <string name="navbar_myPoi">Mine POI</string>
     <string name="ConfirmDelete">Bekræft sletning</string>
-    <string name="Yes">Slet</string>
-    <string name="No">Behold</string>
     <string name="CameraNotFound">Kamara ikke fundet</string>
     <string name="FailedLogIn">Fejl ved log ind</string>
     <string name="NoGPS">GPS ikke tilgænlig</string>
     <string name="LocationChanged">Position har ændret sig</string>
     <string name="NewPoi">Nye interessepunkter i nærheden</string>
+    <string name="Yes">Ja</string>
+    <string name="No">Nej</string>
+    <string name="details_name">Navn: </string>
+    <string name="details_vicinity">I nærheden af: </string>
+    <string name="details_types">Type: </string>
+    <string name="btn_googlemaps">Start Google Maps </string>
 </resources>

@@ -34,6 +34,7 @@ import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Authentication;
 import com.grp16.itsmap.smapexam.network.Database;
+import com.grp16.itsmap.smapexam.network.DatabaseListener;
 import com.grp16.itsmap.smapexam.service.LocationService;
 import com.grp16.itsmap.smapexam.util.AppUtil;
 import com.grp16.itsmap.smapexam.util.NotificationReceiver;
@@ -64,6 +65,12 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         initializeViews();
         authentication = new Authentication();
         database = Database.getInstance();
+        database.addListener(new DatabaseListener() {
+            @Override
+            public void dataReady() {
+                refreshPoiList();
+            }
+        });
     }
 
     private void initializeViews() {
@@ -85,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         });
 
         setupLeftNavigationView();
-        setupRightNavigationView();
     }
 
     private void refreshPoiList() {
@@ -114,19 +120,19 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         poiListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final POI poi = poiList.get(position);
-                Intent intent = new Intent();
-                intent.putExtra("id", poi.uid);
-                intent.putExtra("latitude", poi.latitude);
-                intent.putExtra("longitude", poi.longitude);
-                intent.putExtra("altitude", poi.altitude);
-                intent.putExtra("name", poi.name);
-                intent.putExtra("vicinity", poi.vicinity);
-                intent.putStringArrayListExtra("type", new ArrayList<String>(poi.type));
-
-                //startActivity(intent, DetailsActivity.class);
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                startDetailsFragment(position);
+                drawer.closeDrawer(GravityCompat.END);
             }
         });
+    }
+
+    private void startDetailsFragment(int listPosition) {
+        final POI poi = poiList.get(listPosition);
+        Fragment fragment = DetailsFragment.newInstance(poi);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_fragment_container, fragment);
+        transaction.commit();
     }
 
     private void setupLeftNavigationView() {
@@ -150,21 +156,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-                return true;
-            }
-        });
-    }
-
-    private void setupRightNavigationView() {
-        NavigationView rightNavigationView = (NavigationView) findViewById(R.id.right_nav_view);
-        rightNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                //TODO Do stuff in the right fragment
-
-
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.END);
                 return true;
             }
         });
@@ -253,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                 LocationService.NotificationBinder binder = (LocationService.NotificationBinder) service;
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
-                refreshPoiList();
                 startARCamera();
             }
 

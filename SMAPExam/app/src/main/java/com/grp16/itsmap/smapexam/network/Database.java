@@ -11,6 +11,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.model.UserCustomInfo;
 import com.grp16.itsmap.smapexam.service.LocationParam;
+import com.grp16.itsmap.smapexam.util.PoiListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Database {
     private FirebaseAuth auth;
     private final String USER_COLLECTION_NAME = "User";
     private UserCustomInfo user = new UserCustomInfo();
+    private List<DatabaseListener> listeners = new ArrayList<>();
 
     private static final Database ourInstance = new Database();
 
@@ -80,6 +82,7 @@ public class Database {
                     UserCustomInfo tmp = messageSnapshot.getValue(UserCustomInfo.class);
                     if (tmp.uid.equals(auth.getCurrentUser().getUid().toString())) {
                         user = tmp;
+                        notifyListeners();
                         return;
                     }
                 }
@@ -93,6 +96,12 @@ public class Database {
         userDatabase.addValueEventListener(userPostListener);
     }
 
+    private void notifyListeners() {
+        for (DatabaseListener listener : listeners) {
+            listener.dataReady();
+        }
+    }
+
     //https://www.mullie.eu/geographic-searches/
     private boolean withinRadius(LocationParam location, POI poi) {
         double phoneLat = Math.toRadians(location.getLatitude());
@@ -104,5 +113,13 @@ public class Database {
         double distance = Math.acos(Math.sin(phoneLat) * Math.sin(poiLat) + Math.cos(phoneLat) * Math.cos(poiLat) * Math.cos(phoneLng - poiLng)) * 6371 * 1000;
 
         return distance <= location.getRadius();
+    }
+
+    public void addListener(DatabaseListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(DatabaseListener listener) {
+        listeners.remove(listener);
     }
 }

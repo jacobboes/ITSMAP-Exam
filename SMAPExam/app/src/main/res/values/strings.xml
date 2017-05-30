@@ -35,4 +35,8 @@
     <string name="CreatePoiDialogTitle">Create Point of Interest</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="details_name">Name: </string>
+    <string name="details_vicinity">Vicinity of: </string>
+    <string name="details_types">Type: </string>
+    <string name="btn_googlemaps">Start Google Maps </string>
 </resources>
