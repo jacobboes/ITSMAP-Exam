@@ -11,7 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.model.UserCustomInfo;
 import com.grp16.itsmap.smapexam.service.LocationParam;
-import com.grp16.itsmap.smapexam.util.PoiListener;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -209,6 +209,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         } else {
             if (this.findViewById(R.id.activity_ar) == null)
                 startARCamera();
+            else
+                super.onBackPressed();
         }
     }
 
