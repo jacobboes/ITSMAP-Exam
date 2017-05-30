@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -27,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
 
+    private FloatingActionButton createPoiFab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private void initializeViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupCreatePoiBtn();
         setupPoiListView();
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                 intent.putExtra("vicinity", poi.vicinity);
                 intent.putStringArrayListExtra("type", new ArrayList<String>(poi.type));
 
-                startActivity(intent, DetailsActivity.class);
+//                startActivity(intent, DetailsActivity.class);
             }
         });
     }
@@ -179,6 +182,20 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         authentication.logOut();
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    private void setupCreatePoiBtn() {
+        createPoiFab = (FloatingActionButton) findViewById(R.id.createPoi_fab);
+        createPoiFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCreatePoiDialog();
+            }
+        });
+    }
+
+    private void showCreatePoiDialog() {
+        new CreatePoiDialog(this, this).show();
     }
 
     @Override
@@ -262,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     }
 
     private void setupNotificationReceiver() {
-        if (notificationReceiver == null){
+        if (notificationReceiver == null) {
             notificationReceiver = new NotificationReceiver(this);
             registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
         }

@@ -1,7 +1,7 @@
 package com.grp16.itsmap.smapexam.app;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.grp16.itsmap.smapexam.R;
 

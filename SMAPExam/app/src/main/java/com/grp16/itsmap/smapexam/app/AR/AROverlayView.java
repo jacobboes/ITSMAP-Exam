@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class AROverlayView extends View implements PoiListener{
+public class AROverlayView extends View implements PoiListener {
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;
     private List<POI> arPoints;
@@ -60,6 +60,7 @@ public class AROverlayView extends View implements PoiListener{
             }
         }, 0, TimerInterval);
     }
+
     @Override
     public void finalize() {
         arCameraInteraction.removeListener(this);
@@ -106,7 +107,7 @@ public class AROverlayView extends View implements PoiListener{
         threadResults = new ArrayList<>();
         ExecutorService executor = Executors.newCachedThreadPool();
 
-        for (int i = 0; i < arPoints.size(); i ++) {
+        for (int i = 0; i < arPoints.size(); i++) {
             Runnable worker = new WorkerThread(width, height, arPoints.get(i), threadResults, lock);
             executor.execute(worker);
         }
@@ -118,14 +119,14 @@ public class AROverlayView extends View implements PoiListener{
         }
 
         canvas.save();
-        canvas.rotate(getOrientation(), width/2, height/2);
+        canvas.rotate(getOrientation(), width / 2, height / 2);
 
-        for (DrawObj obj : threadResults){
-            AppUtil.poiTypeMapping.valueOf(obj.type.get(0));
+        for (DrawObj obj : threadResults) {
+            AppUtil.PoiTypeMapping.valueOf(obj.type.get(0));
 
             paint.setColor(Color.DKGRAY);
-            for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
-                if(typeMapping.getVal() == obj.type.get(0))
+            for (AppUtil.PoiTypeMapping typeMapping : AppUtil.PoiTypeMapping.values()) {
+                if (typeMapping.getValue() == obj.type.get(0))
                     paint.setColor(typeMapping.getColor());
             }
 
@@ -136,7 +137,7 @@ public class AROverlayView extends View implements PoiListener{
     }
 
 
-    private int getOrientation(){
+    private int getOrientation() {
         int degrees = 0;
         switch (arCameraInteraction.getOrientation()) {
             case Surface.ROTATION_0:
@@ -163,7 +164,7 @@ public class AROverlayView extends View implements PoiListener{
         private List<DrawObj> drawObjList;
         private ReentrantLock lock;
 
-        public WorkerThread(int width, int height, POI poi, List<DrawObj> drawObjList, ReentrantLock lock){
+        public WorkerThread(int width, int height, POI poi, List<DrawObj> drawObjList, ReentrantLock lock) {
             this.width = width;
             this.height = height;
             this.poi = poi;
@@ -193,17 +194,16 @@ public class AROverlayView extends View implements PoiListener{
                 lock.lock();
                 try {
                     drawObjList.add(drawObj);
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.d(WorkerThread.class.toString(), "Not able to add obj to list");
-                }
-                finally {
+                } finally {
                     lock.unlock();
                 }
             }
         }
     }
 
-    private class DrawObj{
+    private class DrawObj {
         public float x;
         public float y;
         public String name;

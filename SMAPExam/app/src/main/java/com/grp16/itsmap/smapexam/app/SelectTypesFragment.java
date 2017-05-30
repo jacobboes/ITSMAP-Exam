@@ -56,16 +56,16 @@ public class SelectTypesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_select_types, container, false);
         LinearLayout typeList = (LinearLayout) view.findViewById(R.id.linearLayout);
 
-        for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
+        for (AppUtil.PoiTypeMapping typeMapping : AppUtil.PoiTypeMapping.values()) {
             CheckBox checkBox = new CheckBox(inflater.getContext());
             checkBox.setText(typeMapping.getRes());
 
-            LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(10,10,10,0);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(10, 10, 10, 0);
             checkBox.setLayoutParams(params);
 
             typeList.addView(checkBox);
-            types.add(new Type(checkBox, typeMapping.getVal()));
+            types.add(new Type(checkBox, typeMapping.getValue()));
         }
         return view;
     }

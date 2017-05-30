@@ -15,8 +15,7 @@ public class AppUtil {
     public static final String GOOGLE_MAPS_KEY = "AIzaSyCUEm_dhSGGrtpcBh44tCJpbAAQCzYyszI";
     public static final String GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/elevation/json/";
 
-    public enum poiTypeMapping
-    {
+    public enum PoiTypeMapping {
         cafe(R.string.cafe, Color.BLACK, "cafe"),
         restaurant(R.string.restaurant, Color.GREEN, "restaurant"),
         gym(R.string.gym, Color.BLUE, "gym"),
@@ -28,7 +27,7 @@ public class AppUtil {
         private int color;
         private String val;
 
-        poiTypeMapping(int res, int color, String val){
+        PoiTypeMapping(int res, int color, String val) {
 
             this.res = res;
             this.color = color;
@@ -43,7 +42,7 @@ public class AppUtil {
             return color;
         }
 
-        public String getVal() {
+        public String getValue() {
             return val;
         }
     }
