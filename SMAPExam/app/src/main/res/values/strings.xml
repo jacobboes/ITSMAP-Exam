@@ -26,4 +26,9 @@
     <string name="ConfirmDelete">Confirm delete</string>
     <string name="Yes">Yes</string>
     <string name="No">No</string>
+    <string name="CameraNotFound">Camera not found</string>
+    <string name="FailedLogIn">Failed log in.</string>
+    <string name="NoGPS">No location provider available</string>
+    <string name="LocationChanged">Location changed</string>
+    <string name="NewPoi">New points of interest available</string>
 </resources>

@@ -2,9 +2,6 @@ package com.grp16.itsmap.smapexam.util;
 
 import android.location.Location;
 
-/**
- * Created by ntdat on 1/13/17.
- */
 //https://github.com/dat-ng/ar-location-based-android
 public class LocationHelper {
     private final static double WGS84_A = 6378137.0;                  // WGS 84 semi-major axis constant in meters

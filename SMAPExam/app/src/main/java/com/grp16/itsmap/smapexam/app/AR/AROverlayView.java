@@ -194,7 +194,7 @@ public class AROverlayView extends View implements PoiListener{
                 try {
                     drawObjList.add(drawObj);
                 }catch (Exception e){
-                    Log.d(WorkerThread.class.toString(), "Not able to add obj to list");
+                    Log.e(WorkerThread.class.toString(), "Not able to add obj to list");
                 }
                 finally {
                     lock.unlock();

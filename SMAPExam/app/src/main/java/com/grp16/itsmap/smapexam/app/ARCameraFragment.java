@@ -122,7 +122,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
                 camera.startPreview();
                 arCamera.setCamera(camera);
             } catch (RuntimeException ex){
-                Toast.makeText(context, "Camera not found", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.CameraNotFound, Toast.LENGTH_LONG).show();
             }
         }
     }
