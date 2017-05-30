@@ -33,10 +33,12 @@ public class AROverlayView extends View implements PoiListener{
     private List<POI> arPoints;
     private ARCameraInteraction arCameraInteraction;
     private Context contextLocal;
-    private List<DrawObj> threadResults;
-    Timer timer;
-    int Interval = 30;
-    int TimerInterval = 1000 * Interval;
+    private List<DrawObj> threadResults = new ArrayList<>();
+    private Paint paint;
+    private Timer timer;
+    private ReentrantLock lock = new ReentrantLock();
+    private int Interval = 30;
+    private int TimerInterval = 1000 * Interval;
 
     public AROverlayView(Context context, ARCameraInteraction arCameraInteraction) {
         super(context);
@@ -46,6 +48,10 @@ public class AROverlayView extends View implements PoiListener{
         this.arPoints = arCameraInteraction.getPoiList();
         this.arCameraInteraction.addListener(this);
 
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        paint.setTextSize(60);
 
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -96,14 +102,8 @@ public class AROverlayView extends View implements PoiListener{
         final int radius = 30;
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.FILL);
 
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        paint.setTextSize(60);
-
-        ReentrantLock lock = new ReentrantLock();
-        threadResults = new ArrayList<>();
+        threadResults.clear();
         ExecutorService executor = Executors.newCachedThreadPool();
 
         for (int i = 0; i < arPoints.size(); i ++) {
