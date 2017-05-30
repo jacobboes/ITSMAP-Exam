@@ -26,6 +26,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
+//https://github.com/dat-ng/ar-location-based-android
 public class AROverlayView extends View implements PoiListener, DatabaseListener{
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;

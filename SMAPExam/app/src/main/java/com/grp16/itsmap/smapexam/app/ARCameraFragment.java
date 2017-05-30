@@ -22,6 +22,7 @@ import com.grp16.itsmap.smapexam.app.AR.AROverlayView;
 
 import static android.content.Context.SENSOR_SERVICE;
 
+//https://github.com/dat-ng/ar-location-based-android
 public class ARCameraFragment extends Fragment implements SensorEventListener{
     private ARCameraInteraction activity;
     private AROverlayView arOverlayView;
