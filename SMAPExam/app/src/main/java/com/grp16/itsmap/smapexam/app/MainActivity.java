@@ -285,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         }
     }
 
-    // Test to expose location to Fragment
     @Override
     public Location getLocation() {
         if (isServiceBound) {
