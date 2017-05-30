@@ -51,7 +51,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
         View view = inflater.inflate(R.layout.fragment_arcamera, null);
 
         sensorManager = (SensorManager) context.getSystemService(SENSOR_SERVICE);
-        cameraContainerLayout = (FrameLayout) view.findViewById(R.id.camera_container_layout);
+        cameraContainerLayout = (FrameLayout) view.findViewById(R.id.activity_ar);
         surfaceView = (SurfaceView) view.findViewById(R.id.surface_view);
         arOverlayView = new AROverlayView(context, activity);
         return view;

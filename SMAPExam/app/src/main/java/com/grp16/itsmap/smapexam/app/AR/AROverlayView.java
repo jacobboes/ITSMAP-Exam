@@ -122,9 +122,9 @@ public class AROverlayView extends View implements PoiListener{
 
         for (DrawObj obj : threadResults){
             paint.setColor(Color.DKGRAY);
-            for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
+            for (AppUtil.PoiTypeMapping typeMapping : AppUtil.PoiTypeMapping.values()) {
                 for (String s : obj.type) {
-                    if(typeMapping.getVal().equals(s))
+                    if(typeMapping.getValue().equals(s))
                         paint.setColor(typeMapping.getColor());
                 }
             }
