@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.grp16.itsmap.smapexam.app.ARCameraInteraction;
 import com.grp16.itsmap.smapexam.model.POI;
+import com.grp16.itsmap.smapexam.network.Database;
+import com.grp16.itsmap.smapexam.network.DatabaseListener;
 import com.grp16.itsmap.smapexam.util.AppUtil;
 import com.grp16.itsmap.smapexam.util.LocationHelper;
 import com.grp16.itsmap.smapexam.util.PoiListener;
@@ -27,7 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class AROverlayView extends View implements PoiListener{
+public class AROverlayView extends View implements PoiListener, DatabaseListener{
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;
     private List<POI> arPoints;
@@ -37,6 +39,7 @@ public class AROverlayView extends View implements PoiListener{
     private Paint paint;
     private Timer timer;
     private ReentrantLock lock = new ReentrantLock();
+    private Database database = Database.getInstance();
     private int Interval = 30;
     private int TimerInterval = 1000 * Interval;
 
@@ -47,6 +50,7 @@ public class AROverlayView extends View implements PoiListener{
         this.currentLocation = arCameraInteraction.getLocation();
         this.arPoints = arCameraInteraction.getPoiList();
         this.arCameraInteraction.addListener(this);
+        database.addListener(this);
 
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
@@ -69,6 +73,7 @@ public class AROverlayView extends View implements PoiListener{
     @Override
     public void finalize() {
         arCameraInteraction.removeListener(this);
+        database.removeListener(this);
     }
 
     public void updateRotatedProjectionMatrix(float[] rotatedProjectionMatrix) {
@@ -153,6 +158,11 @@ public class AROverlayView extends View implements PoiListener{
                 break;
         }
         return degrees;
+    }
+
+    @Override
+    public void dataReady() {
+        arPoints = arCameraInteraction.getPoiList();
     }
 
     public class WorkerThread implements Runnable {

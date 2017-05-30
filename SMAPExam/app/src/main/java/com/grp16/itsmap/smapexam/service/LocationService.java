@@ -31,7 +31,7 @@ public class LocationService extends Service {
     private Location location;
     private LocationManager locationManager;
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // meters
-    private static final long MIN_TIME_BETWEEN_UPDATES = 1; // 1 minute //TODO set update time
+    private static final long MIN_TIME_BETWEEN_UPDATES = 1 * 60 * 1000; // 1 minute
     private List<POI> pointsOfInterestList;
 
     boolean isGPSEnabled = false;
@@ -127,6 +127,7 @@ public class LocationService extends Service {
     };
 
     public List<POI> getPointsOfInterestList(String type) {
+        Log.d("getPointsOfInterestList", "called");
         location = checkIfLocationAvailable();
         pointsOfInterestList = new ArrayList<>();
         if (location != null) {
