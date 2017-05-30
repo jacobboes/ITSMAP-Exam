@@ -22,7 +22,7 @@ import com.grp16.itsmap.smapexam.app.AR.AROverlayView;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-public class ARCameraFragment extends Fragment implements SensorEventListener {
+public class ARCameraFragment extends Fragment implements SensorEventListener{
     private ARCameraInteraction activity;
     private AROverlayView arOverlayView;
     private Camera camera;
@@ -116,13 +116,13 @@ public class ARCameraFragment extends Fragment implements SensorEventListener {
 
     private void initCamera() {
         int numCams = Camera.getNumberOfCameras();
-        if (numCams > 0) {
-            try {
+        if(numCams > 0){
+            try{
                 camera = Camera.open();
                 camera.startPreview();
                 arCamera.setCamera(camera);
-            } catch (RuntimeException ex) {
-                Toast.makeText(context, "Camera not found", Toast.LENGTH_LONG).show();
+            } catch (RuntimeException ex){
+                Toast.makeText(context, R.string.CameraNotFound, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -136,7 +136,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener {
     }
 
     private void releaseCamera() {
-        if (camera != null) {
+        if(camera != null) {
             camera.setPreviewCallback(null);
             camera.stopPreview();
             arCamera.setCamera(null);

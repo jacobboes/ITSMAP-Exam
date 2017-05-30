@@ -29,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
@@ -44,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ARCameraInteraction, PoiListener {
+public class MainActivity extends AppCompatActivity implements ARCameraInteraction {
     private Authentication authentication;
     private Database database;
 
@@ -52,13 +51,10 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private ServiceConnection connection = getServiceConnection();
     private LocationService service;
     private NotificationReceiver notificationReceiver;
-
     private ListView poiListView;
     private ArrayAdapter adapter;
     private List<POI> poiList;
-    private List<String> places = new ArrayList<>();
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
 
     private FloatingActionButton createPoiFab;
 
@@ -134,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                 intent.putExtra("vicinity", poi.vicinity);
                 intent.putStringArrayListExtra("type", new ArrayList<String>(poi.type));
 
-//                startActivity(intent, DetailsActivity.class);
+                //startActivity(intent, DetailsActivity.class);
             }
         });
     }
@@ -150,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                     startARCamera();
                 } else if (id == R.id.nav_settings) {
                     startSettings();
+                }else if (id == R.id.nav_myPoi) {
+                    startMyPoi();
                 } else if (id == R.id.nav_logout) {
                     logout();
                 } else if (id == R.id.nav_exit) {
@@ -213,8 +211,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
             Intent intent = new Intent(this, LocationService.class);
             bindService(intent, connection, Context.BIND_AUTO_CREATE);
         }
-        requestLocationPermission();
-        requestCameraPermission();
+        requestPermissions();
     }
 
     @Override
@@ -225,19 +222,29 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         } else if (drawer.isDrawerOpen(GravityCompat.END)) {
             drawer.closeDrawer(GravityCompat.END);
         } else {
-            super.onBackPressed();
+            if (this.findViewById(R.id.activity_ar) == null)
+                startARCamera();
         }
     }
 
     private void startARCamera() {
-        Fragment fragment = ARCameraFragment.newInstance(); //TODO Change fragment type to AR Camera instead of Test
+        Fragment fragment = ARCameraFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.commit();
+
     }
 
     private void startSettings() {
         Fragment fragment = SelectTypesFragment.newInstance(database);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void startMyPoi() {
+        Fragment fragment = MyPoiFragment.newInstance(database);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -264,17 +271,10 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         };
     }
 
-    private void requestCameraPermission() {
+    private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            this.requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
-        }
-    }
-
-    private void requestLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
 
@@ -283,10 +283,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
             notificationReceiver = new NotificationReceiver(this);
             registerReceiver(notificationReceiver, new IntentFilter(AppUtil.BROADCAST_LOCATION_CHANGED));
         }
-
-
-        // Testing broadcast listeners
-        //testAddListener();
     }
 
     // Exposes List from Service to other activities
@@ -311,18 +307,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
             return service.getLocation();
         }
         return null;
-    }
-
-    // Testing broadcast
-    @Override
-    public void dataReady(List<POI> data) {
-        Toast.makeText(this, "bla bla", Toast.LENGTH_SHORT).show();
-        //TODO Do stuff to update View with new items from list
-    }
-
-    // Testing broadcast
-    private void testAddListener() {
-        notificationReceiver.addListener(this);
     }
 
     @Override

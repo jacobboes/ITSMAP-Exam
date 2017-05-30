@@ -27,16 +27,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class AROverlayView extends View implements PoiListener {
+public class AROverlayView extends View implements PoiListener{
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;
     private List<POI> arPoints;
     private ARCameraInteraction arCameraInteraction;
     private Context contextLocal;
-    private List<DrawObj> threadResults;
-    Timer timer;
-    int Interval = 30;
-    int TimerInterval = 1000 * Interval;
+    private List<DrawObj> threadResults = new ArrayList<>();
+    private Paint paint;
+    private Timer timer;
+    private ReentrantLock lock = new ReentrantLock();
+    private int Interval = 30;
+    private int TimerInterval = 1000 * Interval;
 
     public AROverlayView(Context context, ARCameraInteraction arCameraInteraction) {
         super(context);
@@ -46,6 +48,10 @@ public class AROverlayView extends View implements PoiListener {
         this.arPoints = arCameraInteraction.getPoiList();
         this.arCameraInteraction.addListener(this);
 
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        paint.setTextSize(60);
 
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -60,7 +66,6 @@ public class AROverlayView extends View implements PoiListener {
             }
         }, 0, TimerInterval);
     }
-
     @Override
     public void finalize() {
         arCameraInteraction.removeListener(this);
@@ -97,17 +102,11 @@ public class AROverlayView extends View implements PoiListener {
         final int radius = 30;
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStyle(Paint.Style.FILL);
 
-        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-        paint.setTextSize(60);
-
-        ReentrantLock lock = new ReentrantLock();
-        threadResults = new ArrayList<>();
+        threadResults.clear();
         ExecutorService executor = Executors.newCachedThreadPool();
 
-        for (int i = 0; i < arPoints.size(); i++) {
+        for (int i = 0; i < arPoints.size(); i ++) {
             Runnable worker = new WorkerThread(width, height, arPoints.get(i), threadResults, lock);
             executor.execute(worker);
         }
@@ -119,15 +118,15 @@ public class AROverlayView extends View implements PoiListener {
         }
 
         canvas.save();
-        canvas.rotate(getOrientation(), width / 2, height / 2);
+        canvas.rotate(getOrientation(), width/2, height/2);
 
-        for (DrawObj obj : threadResults) {
-            AppUtil.PoiTypeMapping.valueOf(obj.type.get(0));
-
+        for (DrawObj obj : threadResults){
             paint.setColor(Color.DKGRAY);
-            for (AppUtil.PoiTypeMapping typeMapping : AppUtil.PoiTypeMapping.values()) {
-                if (typeMapping.getValue() == obj.type.get(0))
-                    paint.setColor(typeMapping.getColor());
+            for (AppUtil.poiTypeMapping typeMapping : AppUtil.poiTypeMapping.values()) {
+                for (String s : obj.type) {
+                    if(typeMapping.getVal().equals(s))
+                        paint.setColor(typeMapping.getColor());
+                }
             }
 
             canvas.drawCircle(obj.x, obj.y, radius, paint);
@@ -137,7 +136,7 @@ public class AROverlayView extends View implements PoiListener {
     }
 
 
-    private int getOrientation() {
+    private int getOrientation(){
         int degrees = 0;
         switch (arCameraInteraction.getOrientation()) {
             case Surface.ROTATION_0:
@@ -164,7 +163,7 @@ public class AROverlayView extends View implements PoiListener {
         private List<DrawObj> drawObjList;
         private ReentrantLock lock;
 
-        public WorkerThread(int width, int height, POI poi, List<DrawObj> drawObjList, ReentrantLock lock) {
+        public WorkerThread(int width, int height, POI poi, List<DrawObj> drawObjList, ReentrantLock lock){
             this.width = width;
             this.height = height;
             this.poi = poi;
@@ -194,16 +193,17 @@ public class AROverlayView extends View implements PoiListener {
                 lock.lock();
                 try {
                     drawObjList.add(drawObj);
-                } catch (Exception e) {
-                    Log.d(WorkerThread.class.toString(), "Not able to add obj to list");
-                } finally {
+                }catch (Exception e){
+                    Log.e(WorkerThread.class.toString(), "Not able to add obj to list");
+                }
+                finally {
                     lock.unlock();
                 }
             }
         }
     }
 
-    private class DrawObj {
+    private class DrawObj{
         public float x;
         public float y;
         public String name;

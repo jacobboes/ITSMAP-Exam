@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">Points of Interest</string>
-    <string name="title_activity_main">Points of Interest</string>
+    <string name="app_name">Interessepunkter</string>
+    <string name="title_activity_main">Interessepunkter</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Åben menu</string>
+    <string name="navigation_drawer_close">Luk menu</string>
 
     <string name="action_settings">Indstillinger</string>
 
     <string name="login_username">Brugernavn</string>
-    <string name="login_password">Password</string>
+    <string name="login_password">Kodeord</string>
     <string name="login_button">Log ind</string>
 
     <string name="navbar_camera">Kamera</string>
@@ -22,4 +22,13 @@
     <string name="gym">Træningscenter</string>
     <string name="restaurant">Restaurant</string>
     <string name="meme_img_desc" />
+    <string name="navbar_myPoi">Mine POI</string>
+    <string name="ConfirmDelete">Bekræft sletning</string>
+    <string name="Yes">Slet</string>
+    <string name="No">Behold</string>
+    <string name="CameraNotFound">Kamara ikke fundet</string>
+    <string name="FailedLogIn">Fejl ved log ind</string>
+    <string name="NoGPS">GPS ikke tilgænlig</string>
+    <string name="LocationChanged">Position har ændret sig</string>
+    <string name="NewPoi">Nye interessepunkter i nærheden</string>
 </resources>

@@ -1,9 +1,12 @@
 package com.grp16.itsmap.smapexam.model;
 
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@IgnoreExtraProperties
 public class UserCustomInfo {
     public String uid;
     public List<String> poiType;

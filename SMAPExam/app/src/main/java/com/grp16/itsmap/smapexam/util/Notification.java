@@ -23,7 +23,8 @@ public class Notification {
                 new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.location_mark)
                         .setContentTitle(title)
-                        .setContentText(msg);
+                        .setContentText(msg)
+                        .setAutoCancel(true);
 
         Intent resultIntent = new Intent(context, MainActivity.class);
         PendingIntent resultPendingIntent =

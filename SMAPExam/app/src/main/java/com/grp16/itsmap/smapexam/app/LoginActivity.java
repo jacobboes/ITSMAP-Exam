@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailed(String error) {
-                Toast.makeText(LoginActivity.this, "Failed log in. " + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.FailedLogIn) + error, Toast.LENGTH_LONG).show();
             }
         });
     }

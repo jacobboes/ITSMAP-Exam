@@ -22,6 +22,15 @@
     <string name="gym">Gym</string>
     <string name="restaurant">Restaurant</string>
     <string name="meme_img_desc" />
+    <string name="navbar_myPoi">My POI</string>
+    <string name="ConfirmDelete">Confirm delete</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="CameraNotFound">Camera not found</string>
+    <string name="FailedLogIn">Failed log in.</string>
+    <string name="NoGPS">No location provider available</string>
+    <string name="LocationChanged">Location changed</string>
+    <string name="NewPoi">New points of interest available</string>
     <string name="title_activity_delete_this">DeleteThis</string>
     <string name="CreatePoiDialogTitle">Create Point of Interest</string>
     <string name="ok">Ok</string>

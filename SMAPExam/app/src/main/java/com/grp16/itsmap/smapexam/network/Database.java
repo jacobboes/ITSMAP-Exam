@@ -1,7 +1,5 @@
 package com.grp16.itsmap.smapexam.network;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,7 +11,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.model.UserCustomInfo;
 import com.grp16.itsmap.smapexam.service.LocationParam;
-import com.grp16.itsmap.smapexam.util.AppUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,6 @@ public class Database {
 
     private DatabaseReference userDatabase;
     private FirebaseAuth auth;
-    private Context context;
     private final String USER_COLLECTION_NAME = "User";
     private UserCustomInfo user = new UserCustomInfo();
 
@@ -38,10 +34,6 @@ public class Database {
         auth = FirebaseAuth.getInstance();
         userDatabase = database.getReference(USER_COLLECTION_NAME);
         listener();
-    }
-
-    public void setContext(Context context){
-        this.context = context;
     }
 
     public void insertUpdate(POI data) {
@@ -88,11 +80,6 @@ public class Database {
                     UserCustomInfo tmp = messageSnapshot.getValue(UserCustomInfo.class);
                     if (tmp.uid.equals(auth.getCurrentUser().getUid().toString())) {
                         user = tmp;
-                        if (context != null){
-                            Intent broadcastPOI = new Intent();
-                            broadcastPOI.setAction(AppUtil.BROADCAST_TYPE_CHANGED);
-                            context.sendBroadcast(broadcastPOI);
-                        }
                         return;
                     }
                 }

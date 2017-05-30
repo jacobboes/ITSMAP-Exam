@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Database;
 import com.grp16.itsmap.smapexam.util.AppUtil;
@@ -50,7 +51,7 @@ public class LocationService extends Service {
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             if (!isGPSEnabled) {
-                Toast.makeText(this, "No location provider available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.NoGPS, Toast.LENGTH_SHORT).show();
             } else {
                 if (locationManager != null) {
                     canGetLocation = true;
@@ -102,7 +103,7 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             if (pointsOfInterestList != null) {
-                notification.Send("Location changed", "New points of interest available");
+                notification.Send(getString(R.string.LocationChanged), getString(R.string.NewPoi));
                 Intent broadcastPOI = new Intent();
                 broadcastPOI.setAction(AppUtil.BROADCAST_LOCATION_CHANGED);
                 sendBroadcast(broadcastPOI);
