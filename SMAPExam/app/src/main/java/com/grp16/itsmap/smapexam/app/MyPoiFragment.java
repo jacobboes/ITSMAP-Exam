@@ -35,7 +35,7 @@ public class MyPoiFragment extends Fragment {
         final List<POI> myPoi = database.getPOI();
 
         ListView poiListView = (ListView) view.findViewById(R.id.my_poi_list_view);
-        ArrayAdapter adapter = new ArrayAdapter<POI>(view.getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, myPoi) {
+        final ArrayAdapter adapter = new ArrayAdapter<POI>(view.getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, myPoi) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -59,6 +59,8 @@ public class MyPoiFragment extends Fragment {
                 .setPositiveButton(getString(R.string.Yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         database.delete(poi);
+                        myPoi.remove(poi);
+                        adapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(getString(R.string.No),new DialogInterface.OnClickListener() {

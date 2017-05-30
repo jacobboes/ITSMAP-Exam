@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private ArrayAdapter adapter;
     private List<POI> poiList;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
