@@ -24,8 +24,8 @@
     <string name="meme_img_desc" />
     <string name="navbar_myPoi">Mine POI</string>
     <string name="ConfirmDelete">Bekræft sletning</string>
-    <string name="Yes">Ja</string>
-    <string name="No">Nej</string>
+    <string name="Yes">Slet</string>
+    <string name="No">Behold</string>
     <string name="CameraNotFound">Kamara ikke fundet</string>
     <string name="FailedLogIn">Fejl ved log ind</string>
     <string name="NoGPS">GPS ikke tilgænlig</string>
