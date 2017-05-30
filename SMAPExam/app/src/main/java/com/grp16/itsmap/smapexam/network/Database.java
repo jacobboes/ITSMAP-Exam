@@ -14,6 +14,7 @@ import com.grp16.itsmap.smapexam.service.LocationParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Database {
 
@@ -38,6 +39,7 @@ public class Database {
     }
 
     public void insertUpdate(POI data) {
+        data.uid = UUID.randomUUID().toString();
         if (user.myPoi.contains(data)) {
             user.myPoi.remove(data);
         }
@@ -51,7 +53,12 @@ public class Database {
     }
 
     public void delete(POI data) {
-        user.myPoi.remove(data);
+        for (POI poi : user.myPoi) {
+            if (poi.uid.equals(data.uid)){
+                user.myPoi.remove(poi);
+                break;
+            }
+        }
         userDatabase.child(auth.getCurrentUser().getUid().toString()).setValue(user);
     }
 

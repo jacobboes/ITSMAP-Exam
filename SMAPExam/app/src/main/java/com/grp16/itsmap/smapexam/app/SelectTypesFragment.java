@@ -17,15 +17,14 @@ import java.util.List;
 
 public class SelectTypesFragment extends Fragment {
 
-    private static Database database;
+    private static Database database = Database.getInstance();
     private List<Type> types;
 
     public SelectTypesFragment() {
         types = new ArrayList<>();
     }
 
-    public static SelectTypesFragment newInstance(Database database) {
-        SelectTypesFragment.database = database;
+    public static SelectTypesFragment newInstance() {
         return new SelectTypesFragment();
     }
 

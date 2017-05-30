@@ -1,6 +1,7 @@
 package com.grp16.itsmap.smapexam.app;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,25 +18,39 @@ import android.widget.TextView;
 import com.grp16.itsmap.smapexam.R;
 import com.grp16.itsmap.smapexam.model.POI;
 import com.grp16.itsmap.smapexam.network.Database;
+import com.grp16.itsmap.smapexam.network.DatabaseListener;
 
 import java.util.List;
 
 
-public class MyPoiFragment extends Fragment {
-    private static Database database;
+public class MyPoiFragment extends Fragment implements DatabaseListener {
+    private static Database database = Database.getInstance();
+    private List<POI> myPoi;
+    private ArrayAdapter adapter;
 
-    public static MyPoiFragment newInstance(Database database) {
-        MyPoiFragment.database = database;
+    public static MyPoiFragment newInstance() {
         return new MyPoiFragment();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        database.addListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        database.removeListener(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_poi, container, false);
-        final List<POI> myPoi = database.getPOI();
+        myPoi = database.getPOI();
 
         ListView poiListView = (ListView) view.findViewById(R.id.my_poi_list_view);
-        final ArrayAdapter adapter = new ArrayAdapter<POI>(view.getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, myPoi) {
+        adapter = new ArrayAdapter<POI>(view.getContext(), android.R.layout.simple_list_item_1, android.R.id.text1, myPoi) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -75,5 +90,11 @@ public class MyPoiFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void dataReady() {
+        myPoi = database.getPOI();
+        adapter.notifyDataSetChanged();
     }
 }

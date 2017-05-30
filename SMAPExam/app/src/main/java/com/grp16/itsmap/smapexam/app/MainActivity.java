@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     }
 
     private void startSettings() {
-        Fragment fragment = SelectTypesFragment.newInstance(database);
+        Fragment fragment = SelectTypesFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     }
 
     private void startMyPoi() {
-        Fragment fragment = MyPoiFragment.newInstance(database);
+        Fragment fragment = MyPoiFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
         transaction.addToBackStack(null);
