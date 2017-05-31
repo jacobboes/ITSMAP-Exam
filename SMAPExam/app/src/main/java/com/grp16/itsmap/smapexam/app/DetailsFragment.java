@@ -49,8 +49,7 @@ public class DetailsFragment extends Fragment {
     }
 
     private void launchGoogleMaps() {
-        //Uri uri = Uri.parse("geo:" + poi.latitude + "," + poi.longitude + "?q=" + poi.vicinity);
-        Uri uri = Uri.parse("geo:" + poi.latitude + "," + poi.longitude);
+        Uri uri = Uri.parse("geo:" + poi.latitude + "," + poi.longitude + "?q=" + poi.vicinity);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
         mapIntent.setPackage("com.google.android.apps.maps");
         startActivity(mapIntent);
