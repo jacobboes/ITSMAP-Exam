@@ -16,7 +16,10 @@ import android.view.ViewGroup;
 import java.io.IOException;
 import java.util.List;
 
-//https://github.com/dat-ng/ar-location-based-android
+/*
+ * This class is from Github
+ * https://github.com/dat-ng/ar-location-based-android
+ */
 @SuppressWarnings("deprecation")
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {

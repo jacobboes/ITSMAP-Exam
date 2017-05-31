@@ -22,7 +22,12 @@ import com.grp16.itsmap.smapexam.app.AR.AROverlayView;
 
 import static android.content.Context.SENSOR_SERVICE;
 
-//https://github.com/dat-ng/ar-location-based-android
+/*
+ * This class is from Github, and has been refactored to extend Fragment
+ * https://github.com/dat-ng/ar-location-based-android
+ *
+ * The original file can be found here: https://github.com/dat-ng/ar-location-based-android/blob/master/app/src/main/java/ng/dat/ar/ARActivity.java
+ */
 public class ARCameraFragment extends Fragment implements SensorEventListener{
     private ARCameraInteraction activity;
     private AROverlayView arOverlayView;
@@ -135,6 +140,7 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
         }
     }
 
+    // Delay changed to Game instead of fastest
     private void registerSensors() {
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
@@ -163,6 +169,4 @@ public class ARCameraFragment extends Fragment implements SensorEventListener{
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         //do nothing
     }
-
-
 }

@@ -2,7 +2,11 @@ package com.grp16.itsmap.smapexam.util;
 
 import android.location.Location;
 
-//https://github.com/dat-ng/ar-location-based-android
+/*
+ * This class is from Github
+ * https://github.com/dat-ng/ar-location-based-android
+ */
+
 public class LocationHelper {
     private final static double WGS84_A = 6378137.0;                  // WGS 84 semi-major axis constant in meters
     private final static double WGS84_E2 = 0.00669437999014;          // square of WGS 84 eccentricity

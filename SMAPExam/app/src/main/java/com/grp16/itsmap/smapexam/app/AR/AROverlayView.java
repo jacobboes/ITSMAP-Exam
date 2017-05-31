@@ -26,7 +26,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
-//https://github.com/dat-ng/ar-location-based-android
+/*
+ * This class is from Github, and has been refactored where specified
+ * https://github.com/dat-ng/ar-location-based-android
+ */
+
 public class AROverlayView extends View implements PoiListener, DatabaseListener{
     private float[] rotatedProjectionMatrix = new float[16];
     private Location currentLocation;
@@ -64,7 +68,9 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
             }
         }, 0, 30 * 1000);
 
-
+        // Calculation has been moved from onDraw to timer
+        // This make the calculations run every 35 msec. instead of on onSensorChanged
+        // Which reduces the amount of calculations necessary
         calcPointsTimer = new Timer();
         calcPointsTimer.schedule(new TimerTask() {
             @Override
@@ -111,6 +117,8 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
             }
         }, 0, 35);
     }
+
+    // Added resource handling
     @Override
     public void finalize() {
         calcPointsTimer.cancel();
@@ -124,14 +132,22 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
         }
     }
 
+    // Removed invalidate call to only draw when necessary
     public void updateRotatedProjectionMatrix(float[] rotatedProjectionMatrix) {
         this.rotatedProjectionMatrix = rotatedProjectionMatrix;
     }
 
+    // Added listener on NotificationReceiver to dynamically update arPoints
     @Override
     public void dataReady(List<POI> data) {
         arPoints = data;
         this.currentLocation = arCameraInteraction.getLocation();
+    }
+
+    // Added listener on Database to dynamically update arPoints, when type changed
+    @Override
+    public void dataReady() {
+        arPoints = arCameraInteraction.getPoiList();
     }
 
     private void runInvalidate() {
@@ -142,6 +158,7 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
         currentLocation = arCameraInteraction.getLocation();
     }
 
+    // Moved DrawObj calculation to timer, to minimize work in onDraw
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -150,9 +167,11 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
         width = canvas.getWidth();
         height = canvas.getHeight();
 
+        // Added support for rotating the canvas
         canvas.save();
         canvas.rotate(getOrientation(), width/2, height/2);
 
+        // Added lock to handle multi thread
         lock.lock();
         List<DrawObj> localResult = new ArrayList<>();
         try {
@@ -178,7 +197,6 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
             canvas.drawText(obj.name, obj.x - (30 * obj.name.length() / 2), obj.y - 80, paint);
         }
 
-
         canvas.restore();
     }
 
@@ -199,11 +217,6 @@ public class AROverlayView extends View implements PoiListener, DatabaseListener
                 break;
         }
         return degrees;
-    }
-
-    @Override
-    public void dataReady() {
-        arPoints = arCameraInteraction.getPoiList();
     }
 
     private class DrawObj{
