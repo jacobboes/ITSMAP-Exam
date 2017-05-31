@@ -1,16 +1,12 @@
 <resources>
     <string name="app_name">Interessepunkter</string>
     <string name="title_activity_main">Interessepunkter</string>
-
     <string name="navigation_drawer_open">Åben menu</string>
     <string name="navigation_drawer_close">Luk menu</string>
-
     <string name="action_settings">Indstillinger</string>
-
     <string name="login_username">Brugernavn</string>
     <string name="login_password">Kodeord</string>
     <string name="login_button">Log ind</string>
-
     <string name="navbar_camera">Kamera</string>
     <string name="navbar_settings">Indstillinger</string>
     <string name="navbar_logout">Log ud</string>
@@ -31,6 +27,10 @@
     <string name="NewPoi">Nye interessepunkter i nærheden</string>
     <string name="Yes">Ja</string>
     <string name="No">Nej</string>
+    <string name="title_activity_delete_this">Slet denne</string>
+    <string name="CreatePoiDialogTitle">Opret Interessepunkt</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Annuller</string>
     <string name="details_name">Navn: </string>
     <string name="details_vicinity">I nærheden af: </string>
     <string name="details_types">Type: </string>

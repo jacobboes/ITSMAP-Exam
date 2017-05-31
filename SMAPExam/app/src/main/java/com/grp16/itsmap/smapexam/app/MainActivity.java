@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         notificationReceiver.addListener(new PoiListener() {
             @Override
             public void dataReady(List<POI> data) {
-                refreshPoiList();
+                refreshPoiList(data);
             }
         });
 
@@ -101,6 +101,11 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private void refreshPoiList() {
         poiList.clear();
         poiList.addAll(getPoiList());
+        adapter.notifyDataSetChanged();
+    }
+    private void refreshPoiList(List<POI> data) {
+        poiList.clear();
+        poiList.addAll(data);
         adapter.notifyDataSetChanged();
     }
 

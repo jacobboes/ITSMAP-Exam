@@ -1,16 +1,12 @@
 <resources>
     <string name="app_name">Points of Interest</string>
     <string name="title_activity_main">Points of Interest</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
-
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="login_button">Login</string>
-
     <string name="navbar_camera">Camera</string>
     <string name="navbar_settings">Settings</string>
     <string name="navbar_logout">Logout</string>
@@ -24,13 +20,13 @@
     <string name="meme_img_desc" />
     <string name="navbar_myPoi">My POI</string>
     <string name="ConfirmDelete">Confirm delete</string>
-    <string name="Yes">Yes</string>
-    <string name="No">No</string>
     <string name="CameraNotFound">Camera not found</string>
     <string name="FailedLogIn">Failed log in.</string>
     <string name="NoGPS">No location provider available</string>
     <string name="LocationChanged">Location changed</string>
     <string name="NewPoi">New points of interest available</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
     <string name="title_activity_delete_this">DeleteThis</string>
     <string name="CreatePoiDialogTitle">Create Point of Interest</string>
     <string name="ok">Ok</string>
