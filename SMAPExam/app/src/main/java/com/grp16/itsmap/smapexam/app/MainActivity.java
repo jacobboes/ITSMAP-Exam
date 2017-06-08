@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
     private LocationService service;
     private NotificationReceiver notificationReceiver;
     private ArrayAdapter adapter;
-    private List<POI> poiList  = new ArrayList<>();
+    private List<POI> poiList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         poiList.addAll(getPoiList());
         adapter.notifyDataSetChanged();
     }
+
     private void refreshPoiList(List<POI> data) {
         poiList.clear();
         poiList.addAll(data);
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                     startARCamera();
                 } else if (id == R.id.nav_settings) {
                     startSettings();
-                }else if (id == R.id.nav_myPoi) {
+                } else if (id == R.id.nav_myPoi) {
                     startMyPoi();
                 } else if (id == R.id.nav_logout) {
                     logout();
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         Fragment fragment = ARCameraFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -235,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         Fragment fragment = SelectTypesFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
-        transaction.addToBackStack(null);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -243,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
         Fragment fragment = MyPoiFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_fragment_container, fragment);
-        transaction.addToBackStack(null);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -257,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements ARCameraInteracti
                 MainActivity.this.service = binder.getService();
                 isServiceBound = true;
                 startARCamera();
+                refreshPoiList();
             }
 
             @Override
